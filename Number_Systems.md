@@ -24,7 +24,6 @@ or the very popular base-16 [hexadecimal positional numeral system](https://en.w
 ```
 are extensively used in computer and software engineering.
 
--------------------------------------------------------------------------------------------------
 ## Positional Numeral Systems
 
 The following table shows the symbols used by the hexadecimal, decimal, octal and binary numeral systems to encode the first 16 natural numbers including zero.
@@ -81,4 +80,6 @@ The next table lists the power of each digit position for the decimal, binary, o
 |      |         |     |**64**|&#8776;16E|   -  |          |**16**|&#8776;16E|
 |**21**|       1Z|Zeta |**70**|&#8776;1Z |   -  |          |   -  |          |
 |**24**|       1Y|Yotta|**80**|&#8776;1Y |   -  |          |**20**|&#8776;1Y |
+
+## Base Conversions
 
