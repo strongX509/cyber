@@ -83,3 +83,65 @@ The next table lists the power of each digit position for the decimal, binary, o
 
 ## Base Conversions
 
+**Python**: Base conversions from decimal to binary, octal or hexadecimal format are a piece of cake
+```python
+>>> bin(703)
+'0b1010111111'
+>>> oct(703)
+'0o1277'
+>>> hex(703)
+'0x2bf'
+```
+The following expression formats a binary number with a constant length of 16 bits
+```python
+>>> format(703, '#018b')
+'0b0000001010111111'
+```
+In a similar fashion we can format a hexadecimal number with  a constant length of 4 nibbles
+```python
+>>> format(703, '#06x')
+'0x02bf'
+```
+And if we want to get rid of the base prefixes
+```python
+>>> format(703, '016b')
+'0000001010111111'
+>>> format(703, '04x')
+'02bf'
+```
+In the reverse direction, binary, octal or hexadecimal constants can be displayed as decimal values
+```python
+>>> print(0b1010111111)
+703
+>>> print(0o1277)
+703
+>>> print(0x2bf)
+703
+```
+The following expression stores the bits of a 16 bit integer in an array
+```python
+>>> [int(x) for x in '{:016b}'.format(703)]
+[0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
+```
+and can be used for further processing
+```python
+>>> bits = [int(x) for x in '{:016b}'.format(703)]
+>>> print('msb:', bits[0], 'lsb:', bits[15])
+msb: 0 lsb: 1
+```
+We can also pick individual bits using the shift-right operator `>>` and the single bit mask `0x0001`
+```python
+>>> value = 703
+>>> value & 0x0001         # lsb
+1
+>>> (value >> 6) & 0x0001
+0
+>>> (value >> 7) & 0x0001
+1
+>>> (value >> 8) & 0x0001
+0
+>>> (value >> 9) & 0x0001
+1
+>>> (value >> 15) & 0x0001  # msb
+0
+```
