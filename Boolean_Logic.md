@@ -197,3 +197,6 @@ The precedence (priority) of the Python logical operators is as follows:
 10. `or`  - Boolean OR
 
 If in doubt add additional parentheses!
+
+Author:  [Andreas Steffen](mailto:andreas.steffen@strongsec.net) [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
+

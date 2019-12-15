@@ -223,3 +223,4 @@ Since the base is given, the *base prefix is* not required
 703
 ```
 
+Author:  [Andreas Steffen](mailto:andreas.steffen@strongsec.net) [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
