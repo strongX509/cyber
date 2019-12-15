@@ -83,7 +83,7 @@ The next table lists the power of each digit position for the decimal, binary, o
 
 ## Bits, Bytes and Words
 
-The  ASCII graphisc below show a 32 bit data word in so called *network order* as defined by [RFC 1700](https://tools.ietf.org/html/rfc1700). Network order is used to transmit data over communication links in a platform-independent way.
+The  ASCII graphics below show a 32 bit data word in so called *network order* as defined by [RFC 1700](https://tools.ietf.org/html/rfc1700). Network order is used to transmit data over communication links in a platform-independent way.
 
 ``` <!-- language: lang-none -->
   0                   1                   2                   3
@@ -96,15 +96,16 @@ The  ASCII graphisc below show a 32 bit data word in so called *network order* a
  |                         32 bit word                           |  1 word
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
-The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit word` is transmitted first, followed by `byte 1` and `byte 2` and at last `byte 3`, the least significant byte (LSB). Within the left-most `byte 0`, `bit 0` is the most significant bit that is transmitted first and `bit 7`,  the least significant bit, is transmitted last.
+The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit word` is transmitted first, followed by `byte 1` and `byte 2` and at last `byte 3`, the least significant byte (LSB). Within the left-most `byte 0`,  the left-most `bit 0` is the most significant bit that is transmitted first and `bit 7`,  the least significant bit, is transmitted last.
 
-Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comprising 4 bytes is described by 8 nibbles. 
+Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comprising 4 bytes totals 8 nibbles. 
 
 ## Base Conversions
 
 ### Conversion from Decimal Representation
 
 **Python**: Base conversions from decimal to binary, octal or hexadecimal format are a piece of cake
+
 ```python
 >>> bin(703)
 '0b1010111111'
