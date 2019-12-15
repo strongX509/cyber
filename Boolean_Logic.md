@@ -10,6 +10,7 @@
 7. [The NOR Operator](#section7)
 8. [DeMorgan's Theorems ](#section8)
 9. [Python Logical Operator Precedence](#section9)
+
 ## Booleans <a name="section1"></a>
 
 Boolean values, logic and algebra are named after the British mathematician [George Boole](https://en.wikipedia.org/wiki/George_Boole) (1815-1864).
@@ -186,12 +187,13 @@ The precedence (priority) of the Python logical operators is as follows:
 
 1. `()` - Parentheses
 2. `~`  - Bitwise NOT
-3. `&`  - Bitwise AND
-4. `^`  - Bitwise XOR
-5. `|`  - Bitwise OR
-6. `==`, `!=` - Comparisons
-7. `not` - Boolean NOT
-8. `and` - Boolean AND
-9. `or`  - Boolean OR
+3. `<<`,  `>>` - Bitwise shifts
+4. `&`  - Bitwise AND
+5. `^`  - Bitwise XOR
+6. `|`  - Bitwise OR
+7. `==`, `!=` - Comparisons
+8. `not` - Boolean NOT
+9. `and` - Boolean AND
+10. `or`  - Boolean OR
 
 If in doubt add additional parentheses!
