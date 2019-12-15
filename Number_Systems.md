@@ -81,7 +81,28 @@ The next table lists the power of each digit position for the decimal, binary, o
 |**21**|       1Z|Zeta |**70**|&#8776;1Z |   -  |          |   -  |          |
 |**24**|       1Y|Yotta|**80**|&#8776;1Y |   -  |          |**20**|&#8776;1Y |
 
+## Bits, Bytes and Words
+
+The  ASCII graphisc below show a 32 bit data word in so called *network order* as defined by [RFC 1700](https://tools.ietf.org/html/rfc1700). Network order is used to transmit data over communication links in a platform-independent way.
+
+``` <!-- language: lang-none -->
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1  32 bits
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |   0   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |  8 hex nibbles
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |    byte 0     |    byte 1     |    byte 2     |    byte 3     |  4 bytes
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                         32 bit word                           |  1 word
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+```
+The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit word` is transmitted first, followed by `byte 1` and `byte 2` and at last `byte 3`, the least significant byte (LSB). Within the left-most `byte 0`, `bit 0` is the most significant bit that is transmitted first and `bit 7`,  the least significant bit, is transmitted last.
+
+Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comprising 4 bytes is described by 8 nibbles. 
+
 ## Base Conversions
+
+### Conversion from Decimal Representation
 
 **Python**: Base conversions from decimal to binary, octal or hexadecimal format are a piece of cake
 ```python
@@ -109,7 +130,59 @@ And if we want to get rid of the base prefixes
 >>> format(703, '04x')
 '02bf'
 ```
-In the reverse direction, binary, octal or hexadecimal constants can be displayed as decimal values
+The following expression stores the bits of a 16 bit integer in an array
+```python
+>>> [int(x) for x in format(703, '016b')]
+[0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
+```
+that can be used for further processing
+```python
+>>> bits = [int(x) for x in format(703, '016b')]
+>>> print('msb:', bits[0], 'lsb:', bits[15])
+msb: 0 lsb: 1
+```
+We can also directly pick individual bits using the shift-right operator `>>` and the *single bit mask* `0x0001`
+```python
+>>> value = 703
+>>> mask = 0x0001
+>>> value & mask           # lsb
+1
+>>> (value >> 6) & mask    # bit at b*2^6
+0
+>>> (value >> 7) & mask    # bit at b*2^7
+1
+>>> (value >> 8) & mask    # bit at b*2^8
+0
+>>> (value >> 9) & mask    # bit at b*2^9
+1
+>>> (value >> 15) & mask   # msb
+0
+```
+Since a hex number contains the characters `A` to `F` we have to analyze the nibbles as a string
+```python
+>>> nibbles = format(703, '04X')
+>>> print(nibbles[0], nibbles[1], nibbles[2], nibbles[3])
+0 2 B F
+```
+or we can convert each nibble into an integer
+```python
+>>> [int(x,16) for x in format(703, '04x')]
+[0, 2, 11, 15]
+```
+Using the *byte mask* `0x00ff` we can determine the decimal value of each byte
+```python
+>>> value = 703
+>>> mask = 0x00ff
+>>> value & mask          # lower byte
+191
+>>> (value >> 8) & mask   # upper byte
+2
+```
+
+### Conversion to Decimal Representation
+
+**Python**: In the reverse direction, binary, octal or hexadecimal *constants* can be displayed as decimal values
+
 ```python
 >>> print(0b1010111111)
 703
@@ -118,30 +191,25 @@ In the reverse direction, binary, octal or hexadecimal constants can be displaye
 >>> print(0x2bf)
 703
 ```
-The following expression stores the bits of a 16 bit integer in an array
+Usually numbers in various formats are input as *character strings* which can be converted to an integer using the `int(value, base)` function
 ```python
->>> [int(x) for x in '{:016b}'.format(703)]
-[0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1]
+>>> int('0b1010111111', 2)
+703
+>>> int('0o1277', 8)
+703
+>>> int('0x2bf', 16)
+703
+>>> int('703', 10)
+703
+>>> int('703')
+703
 ```
-and can be used for further processing
+Since the base is given, the *base prefix is* not required
 ```python
->>> bits = [int(x) for x in '{:016b}'.format(703)]
->>> print('msb:', bits[0], 'lsb:', bits[15])
-msb: 0 lsb: 1
-```
-We can also pick individual bits using the shift-right operator `>>` and the single bit mask `0x0001`
-```python
->>> value = 703
->>> value & 0x0001         # lsb
-1
->>> (value >> 6) & 0x0001
-0
->>> (value >> 7) & 0x0001
-1
->>> (value >> 8) & 0x0001
-0
->>> (value >> 9) & 0x0001
-1
->>> (value >> 15) & 0x0001  # msb
-0
+>>> int('1010111111', 2)
+703
+>>> int('1277', 8)
+703
+>>> int('2bf', 16)
+703
 ```
