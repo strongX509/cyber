@@ -1,4 +1,12 @@
-## Representation of Natural Numbers
+# Number Systems
+
+## Table of Contents
+1. [Representation of Natural Numbers](#section1)
+2. [Positional Numeral Systems](#section2)
+3. [Bits, Bytes and Words](#section3)
+4. [Base Conversions](#section4)
+
+## Representation of Natural Numbers <a name="section1"></a>
 
 The [natural numbers](https://en.wikipedia.org/wiki/Natural_number) consist of all positive integers 1, 2, 3, ... Often zero is also included, so that the natural numbers cover all non-negative integers 0, 1, 2, 3, ...
 
@@ -24,7 +32,7 @@ or the very popular base-16 [hexadecimal positional numeral system](https://en.w
 ```
 are extensively used in computer and software engineering.
 
-## Positional Numeral Systems
+## Positional Numeral Systems <a name="section2"></a>
 
 The following table shows the symbols used by the hexadecimal, decimal, octal and binary numeral systems to encode the first 16 natural numbers including zero.
 
@@ -81,7 +89,7 @@ The next table lists the power of each digit position for the decimal, binary, o
 |**21**|       1Z|Zeta |**70**|&#8776;1Z |   -  |          |   -  |          |
 |**24**|       1Y|Yotta|**80**|&#8776;1Y |   -  |          |**20**|&#8776;1Y |
 
-## Bits, Bytes and Words
+## Bits, Bytes and Words <a name="section3"></a>
 
 The  ASCII graphics below show a 32 bit data word in so called *network order* as defined by [RFC 1700](https://tools.ietf.org/html/rfc1700). Network order is used to transmit data over communication links in a platform-independent way.
 
@@ -100,7 +108,7 @@ The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit w
 
 Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comprising 4 bytes totals 8 nibbles. 
 
-## Base Conversions
+## Base Conversions <a name="section4"></a>
 
 ### Conversion from Decimal Representation
 
@@ -214,3 +222,4 @@ Since the base is given, the *base prefix is* not required
 >>> int('2bf', 16)
 703
 ```
+

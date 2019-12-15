@@ -1,4 +1,16 @@
-## Booleans
+# Boolean Logic
+
+## Table of Contents
+1. [Booleans](#section1)
+2. [The AND Operator](#section2)
+3. [The OR Operator](#section3)
+4. [The XOR Operator](#section4)
+5. [The NOT Operator](#section5)
+6. [The NAND Operator](#section6)
+7. [The NOR Operator](#section7)
+8. [DeMorgan's Theorems ](#section8)
+9. [Python Logical Operator Precedence](#section9)
+## Booleans <a name="section1"></a>
 
 Boolean values, logic and algebra are named after the British mathematician [George Boole](https://en.wikipedia.org/wiki/George_Boole) (1815-1864).
 
@@ -27,7 +39,7 @@ or by the keywords `False` and `True`:
 x: False y: True and: False or: True xor: True not: True
 ```
 
-## The AND Operator
+## The AND Operator <a name="section2"></a>
 
 The Boolean AND operator `z = x AND y` has the following truth table:
 
@@ -46,7 +58,7 @@ The AND operation can also be interpreted as the binary multiplication `z = x * 
 '0b0001'
 ```
 
-## The OR Operator
+## The OR Operator <a name="section3"></a>
 
 The Boolean OR operator `z = x OR y` has the following truth table:
 
@@ -63,7 +75,7 @@ The Boolean OR operator `z = x OR y` has the following truth table:
 '0b0111'
 ```
 
-## The XOR Operator
+## The XOR Operator <a name="section4"></a>
 
 The Boolean AND operator `z = x XOR y` has the following truth table:
 
@@ -90,7 +102,7 @@ The *associativity*, *commutativity* and *inequality* properties of the XOR oper
 ```
 The plaintext bits `0b0101` are encrypted on the transmitting side by the secret cipher stream bits `0b0011` and decrypted on the receiving side by applying the same cipher stream sequence `0b0011` again.
 
-## The NOT Operator
+## The NOT Operator <a name="section5"></a>
 
 The Boolean NOT operator `z = NOT x` has the following truth table:
 
@@ -108,7 +120,7 @@ The NOT operation inverts the Boolean input value.
 ```
 Since Python treats the bit array as a signed integer, a bit mask `0b1111` corresponding to the number of elements in the bit array must be applied after the inversion in order to convert the result into an unsigned integer.
 
-## The NAND Operator
+## The NAND Operator <a name="section6"></a>
 
 The Boolean NAND operator `z = x NAND y = NOT (x AND y)` has the following truth table:
 
@@ -129,7 +141,7 @@ implemented by transitor-based NAND gates used in electronic circuitry.
 ```
 Since Python treats the bit array as a signed integer, a bit mask `0b1111` corresponding to the number of elements in the bit array must be applied after the inversion in order to convert the result into an unsigned integer.
 
-## The NOR Operator
+## The NOR Operator <a name="section7"></a>
 
 The Boolean NOR operator `z = x NOR y = NOT (x OR y)` has the following truth table:
 
@@ -150,7 +162,7 @@ implemented by transitor-based NOR gates used in electronic circuitry.
 ```
 Since Python treats the bit array as a signed integer, a bit mask `0b1111` corresponding to the number of elements in the bit array must be applied after the inversion in order to convert the result into an unsigned integer.
 
-## DeMorgan's Theorems
+## DeMorgan's Theorems <a name="section8"></a>
 
 Two theorems formulated by [Augustus de Morgan](https://en.wikipedia.org/wiki/Augustus_De_Morgan) (1806-1871) sometimes allow the simplification of complex Boolean expressions:
 
@@ -168,7 +180,7 @@ Two theorems formulated by [Augustus de Morgan](https://en.wikipedia.org/wiki/Au
 '0b0000'
 ```
 
-## Python Logical Operator Precedence
+## Python Logical Operator Precedence <a name="section9"></a>
 
 The precedence (priority) of the Python logical operators is as follows:
 
