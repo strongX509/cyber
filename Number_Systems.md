@@ -16,7 +16,7 @@ Natural numbers are usually represented in the [decimal numeral system](https://
 ```
 But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system](https://en.wikipedia.org/wiki/Positional_notation). The generic positional notation for an arbitrary number base is shown below.
 
-![Number = Digits_Radix](https://upload.wikimedia.org/wikipedia/commons/7/78/Positional_notation_glossary-en.svg "Terms used in positional numeral systems")
+![Number = Digits_Radix](https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png "Terms used in positional numeral systems")
 
 Actually for a computer built from electronic NAND and NOR gates implementing Boolean logic, the base-2 [binary numeral system](https://en.wikipedia.org/wiki/Binary_number) is a much more convenient number representation:
 ```
@@ -86,8 +86,12 @@ The next table lists the power of each digit position for the decimal, binary, o
 |**15**|       1P|Peta |**50**|&#8776;1P |   -  |          |   -  |          |
 |**18**|       1E|Exa  |**60**|&#8776;1E |**20**|&#8776;1E |**15**|&#8776;1E |
 |      |         |     |**64**|&#8776;16E|   -  |          |**16**|&#8776;16E|
-|**21**|       1Z|Zeta |**70**|&#8776;1Z |   -  |          |   -  |          |
+|**21**|       1Z|Zetta|**70**|&#8776;1Z |   -  |          |   -  |          |
 |**24**|       1Y|Yotta|**80**|&#8776;1Y |   -  |          |**20**|&#8776;1Y |
+
+As you can see, a 32 bit word encodes `2^32 = 4'294'967'296` or approximately 4G different values whereas a 64 bit word represents `2^64` or about 16E different numbers.
+
+It is assumed that the [Utah Data Center](https://en.wikipedia.org/wiki/Utah_Data_Center) run by the National Security Agency (NSA) has a storage capacity of about 3 to 12 Exabytes. And [IDC](https://www.seagate.com/files/www-content/our-story/trends/files/idc-seagate-dataage-whitepaper.pdf) predicts that the collective sum of the world’s data will grow from 33 Zettabytes in 2018 to 175 ZB by 2025.
 
 ## Bits, Bytes and Words <a name="section3"></a>
 

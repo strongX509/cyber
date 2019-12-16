@@ -51,13 +51,26 @@ The Boolean AND operator `z = x AND y` has the following truth table:
 | 1 | 0 |**0**|
 | 1 | 1 |**1**|
 
+**Rule**:  The output `z` is  1 (TRUE) only when both inputs `x` and `y` are 1 (TRUE).
+
 The AND operation can also be interpreted as the binary multiplication `z = x * y`.
 
-**Python:** Using the `&` operator, the AND operation can be applied to a bit array stored in a data word in a *bitwise* manner 
+**Python:** Using the `&` operator, the AND operation can be applied to two bit arrays `x[]` and `y[]`, each represented in a compact form by four consecutive bits of the integer constants `0b0011` and `0b0101`, respectively, so that the output bit array `z[]` with value `0b0001` is computed in the following *bitwise* manner:
+
+```
+   z[0] = x[0] and y[0]
+   z[1] = x[1] and y[1]
+   z[2] = x[2] and y[2]
+   z[3] = x[3] and y[3]
+```
+The single python command below computes this *bitwise* AND of the two input bit arrays
 ```python
 >>> format(0b0011 & 0b0101, '#06b')
 '0b0001'
 ```
+and actually generates all four possible states of the AND truth table listed above.
+
+The auxiliary format parameter`#06b` controls the output of a minimum of `6` characters, starting with the `0b` base-2 prefix (activated by `#`) and followed by 4 binary bits with leading zeroes (activated by `0`).
 
 ## The OR Operator <a name="section3"></a>
 
@@ -70,7 +83,10 @@ The Boolean OR operator `z = x OR y` has the following truth table:
 | 1 | 0 |**1**|
 | 1 | 1 |**1**|
 
-**Python:** Using the `|` operator, the OR operation can be applied to a bit array stored in a data word in a *bitwise* manner 
+**Rule**: The output `z` is  1 (TRUE) when at least one of the inputs `x` and `y` are 1 (TRUE).
+
+**Python:** Using the `|` operator, the OR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+
 ```python
 >>> format(0b0011 | 0b0101, '#06b')
 '0b0111'
@@ -87,11 +103,14 @@ The Boolean AND operator `z = x XOR y` has the following truth table:
 | 1 | 0 |**1**|
 | 1 | 1 |**0**|
 
-The XOR operation can also be interpreted as the inequality operation `z = x != y`.
+**Rule**: The output `z` is  1 (TRUE) when the values of the inputs `x` and `y` are differing.
+
+The XOR operation can thus be interpreted as the inequality operation `z = x != y`.
 
 Therefore `x XOR x = 0` and it follows that `x XOR y XOR x = y XOR x XOR x = y XOR 0 = y`, i.e. `y` can always be retrieved after XOR-ing it with `x`, by XOR-ing the result with `x` again. This property is used e.g. by *stream ciphers* in crypto devices and *data scramblers* in communication systems.
 
-**Python:** Using the `^` operator, the XOR operation can be applied to a bit array stored in a data word in a *bitwise* manner 
+**Python:** Using the `^` operator, the XOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+
 ```python
 >>> format(0b0011 ^ 0b0101, '#06b')
 '0b0110'
@@ -112,9 +131,10 @@ The Boolean NOT operator `z = NOT x` has the following truth table:
 | 0 |**1**|
 | 1 |**0**|
 
-The NOT operation inverts the Boolean input value.
+**Rule**: The output `z` is the Boolean complement of the input `x`.
 
-**Python:** Using the `~` operator, the NOT operation can be applied to a bit array stored in a data word in a bitwise manner 
+**Python:** Using the `~` operator, the NOT operationcan be applied in a *bitwise* manner to the bit array represented by the integer `0b0011`
+
 ```python
 >>> format(~0b0011 & 0b1111, '#06b')
 '0b1100'
@@ -132,10 +152,13 @@ The Boolean NAND operator `z = x NAND y = NOT (x AND y)` has the following truth
 | 1 | 0 |**1**|
 | 1 | 1 |**0**|
 
+**Rule**:  The output `z` is  0 (FALSE) only when both inputs `x` and `y` are 1 (TRUE).
+
 The NAND operation is equivalent to an inverted AND operation and is
 implemented by transitor-based NAND gates used in electronic circuitry.
 
-**Python:** Using the `~` and `&` operators, the NAND operation can be applied to a bit array stored in a data word in a bitwise manner 
+**Python:** Using the `~` and `&` operators, the NAND operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+
 ```python
 >>> format(~(0b0011 & 0b0101) & 0b1111, '#06b')
 '0b1110'
@@ -153,10 +176,12 @@ The Boolean NOR operator `z = x NOR y = NOT (x OR y)` has the following truth ta
 | 1 | 0 |**0**|
 | 1 | 1 |**0**|
 
-The NOR operation is equivalent to an inverted OR operation and is
-implemented by transitor-based NOR gates used in electronic circuitry.
+**Rule**: The output `z` is  0 (FALSE) when at least one of the inputs `x` and `y` are 1 (TRUE).
 
-**Python:** Using the `~` and `|` operators, the NAND operation can be applied to a bit array stored in a data word in a bitwise manner 
+The NOR operation is equivalent to an inverted OR operation and is implemented by transitor-based NOR gates used in electronic circuitry.
+
+**Python:** Using the `~` and `|` operators, the NAND operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+
 ```python
 >>> format(~(0b0011 | 0b0101) & 0b1111, '#06b')
 '0b1000'
