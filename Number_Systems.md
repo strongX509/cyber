@@ -14,10 +14,12 @@ Natural numbers are usually represented in the [decimal numeral system](https://
 ```
 703 = 7*10^2 + 0*10^1 + 3*10^0
 ```
-But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system](https://en.wikipedia.org/wiki/Positional_notation). The generic positional notation for an arbitrary number base is shown below.
+But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system](https://en.wikipedia.org/wiki/Positional_notation). The generic positional notation for a number with an arbitrary base or radix is shown below.
 
 ![Number = Digits_Radix](https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png "Terms used in positional numeral systems")
-
+```
+Number = ... + Digit*Radix^Index + ... + Digit_1*Radix^1 + Digit_0*Radix^0
+```
 Actually for a computer built from electronic NAND and NOR gates implementing Boolean logic, the base-2 [binary numeral system](https://en.wikipedia.org/wiki/Binary_number) is a much more convenient number representation:
 ```
 1010111111 = 1*2^9 + 0*2^8 + 1*2^7 + 0*2^6 + 1*2^5 + 1*2^4 + 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
@@ -108,7 +110,7 @@ The  ASCII graphics below show a 32 bit data word in so called *network order* a
  |                         32 bit word                           |  1 word
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
-The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit word` is transmitted first, followed by `byte 1` and `byte 2` and at last `byte 3`, the least significant byte (LSB). Within the left-most `byte 0`,  the left-most `bit 0` is the most significant bit that is transmitted first and `bit 7`,  the least significant bit, is transmitted last.
+The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit word` is transmitted first, followed by `byte 1`, then `byte 2` and at last `byte 3`, the least significant byte (LSB). Within the left-most `byte 0`,  the left-most `bit 0` is the most significant bit that is transmitted first and `bit 7`,  the least significant bit, is transmitted last.
 
 Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comprising 4 bytes totals 8 nibbles. 
 
