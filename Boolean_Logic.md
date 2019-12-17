@@ -13,7 +13,7 @@
 
 ## Booleans <a name="section1"></a>
 
-Boolean values, logic and algebra are named after the British mathematician [George Boole](https://en.wikipedia.org/wiki/George_Boole) (1815-1864).
+Boolean values, logic and algebra are named after the British mathematician [George Boole][BOOL] (1815-1864).
 
 Booleans can take on only two binary values:
 
@@ -39,6 +39,7 @@ or by the keywords `False` and `True`:
 >>> print('x:', x, 'y:', y, 'and:', x and y, 'or:', x or y, 'xor:', x != y, 'not:', not x)
 x: False y: True and: False or: True xor: True not: True
 ```
+[BOOL]: https://en.wikipedia.org/wiki/George_Boole
 
 ## The AND Operator <a name="section2"></a>
 
@@ -209,13 +210,14 @@ Since Python treats the bit array as a signed integer, a bit mask `0b1111` corre
 
 ## DeMorgan's Theorems <a name="section8"></a>
 
-Two theorems formulated by [Augustus de Morgan](https://en.wikipedia.org/wiki/Augustus_De_Morgan) (1806-1871) sometimes allow the simplification of complex Boolean expressions:
+Two theorems formulated by [Augustus de Morgan][MORG] (1806-1871) sometimes allow the simplification of complex Boolean expressions:
 
 * The first DeMorgan theorem states the relationship `NOT (x AND y) = (NOT x) OR (NOT y)`, i.e. the NAND operation is equivalent to the OR operation with inverted inputs.
 
 * The second DeMorgan theorem states the dual relationship `NOT (x OR y) = (NOT x) AND (NOT y)`, i.e. the NOR operation is equivalent to the AND operation with inverted inputs.
 
 **Python**: We implement these two relationships using the *bitwise* operators `&`, `|` and `~` and verify the equality of the left and right side of the expressions using the *bitwise* inequality operator `^`:
+
 ```python
 >>> x = 0b0011
 >>> y = 0b0101
@@ -224,6 +226,7 @@ Two theorems formulated by [Augustus de Morgan](https://en.wikipedia.org/wiki/Au
 >>> format(~(x | y) ^ (~x & ~y), '#06b')
 '0b0000'
 ```
+[MORG]: https://en.wikipedia.org/wiki/Augustus_De_Morgan
 
 ## Python Logical Operator Precedence <a name="section9"></a>
 
@@ -242,5 +245,7 @@ The precedence (priority) of the Python logical operators is as follows:
 
 If in doubt add additional parentheses!
 
-Author:  [Andreas Steffen](mailto:andreas.steffen@strongsec.net) [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
+Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
+[AS]: mailto:andreas.steffen@strongsec.net
+[CC]: http://creativecommons.org/licenses/by/4.0/

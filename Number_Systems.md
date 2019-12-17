@@ -8,31 +8,38 @@
 
 ## Representation of Natural Numbers <a name="section1"></a>
 
-The [natural numbers](https://en.wikipedia.org/wiki/Natural_number) consist of all positive integers 1, 2, 3, ... Often zero is also included, so that the natural numbers cover all non-negative integers 0, 1, 2, 3, ...
+The [natural numbers][NAT_NUM] consist of all positive integers 1, 2, 3, ... Often zero is also included, so that the natural numbers cover all non-negative integers 0, 1, 2, 3, ...
 
-Natural numbers are usually represented in the [decimal numeral system](https://en.wikipedia.org/wiki/Decimal) or base-10 [positional numeral system](https://en.wikipedia.org/wiki/Positional_notation):
+Natural numbers are usually represented in the [decimal numeral system][DEC_NUM] or base-10 [positional numeral system][POS_NUM]:
 ```
 703 = 7*10^2 + 0*10^1 + 3*10^0
 ```
-But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system](https://en.wikipedia.org/wiki/Positional_notation). The generic positional notation for a number with an arbitrary base or radix is shown below.
+But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system][POS_NUM]. The generic positional notation for a number with an arbitrary base or radix is shown below.
 
 ![Number = Digits_Radix](https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png "Terms used in positional numeral systems")
 ```
 Number = ... + Digit*Radix^Index + ... + Digit_1*Radix^1 + Digit_0*Radix^0
 ```
-Actually for a computer built from electronic NAND and NOR gates implementing Boolean logic, the base-2 [binary numeral system](https://en.wikipedia.org/wiki/Binary_number) is a much more convenient number representation:
+Actually for a computer built from electronic NAND and NOR gates implementing Boolean logic, the base-2 [binary numeral system][BIN_NUM] is a much more convenient number representation:
 ```
 1010111111 = 1*2^9 + 0*2^8 + 1*2^7 + 0*2^6 + 1*2^5 + 1*2^4 + 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
 ```
-For humans the many digits of a binary number representation are quite tiresome. Therefore the more compact base-8 [octal numeral system](https://en.wikipedia.org/wiki/Octal)
+For humans the many digits of a binary number representation are quite tiresome. Therefore the more compact base-8 [octal numeral system][OCT_NUM]
 ```
 1277 = 1*8^3 + 2*8^2 + 7*8^1 + 7*8^0
 ```
-or the very popular base-16 [hexadecimal positional numeral system](https://en.wikipedia.org/wiki/Hexadecimal)
+or the very popular base-16 [hexadecimal numeral system][HEX_NUM]
 ```
 2BF = 2*16^2 + B*16^1 + F*16^0
 ```
 are extensively used in computer and software engineering.
+
+[NAT_NUM]: https://en.wikipedia.org/wiki/Natural_number
+[POS_NUM]: https://en.wikipedia.org/wiki/Positional_notation
+[DEC_NUM]: https://en.wikipedia.org/wiki/Decimal
+[BIN_NUM]: https://en.wikipedia.org/wiki/Binary_number
+[OCT_NUM]: https://en.wikipedia.org/wiki/Octal
+[HEX_NUM]: https://en.wikipedia.org/wiki/Hexadecimal
 
 ## Positional Numeral Systems <a name="section2"></a>
 
@@ -93,11 +100,14 @@ The next table lists the power of each digit position for the decimal, binary, o
 
 As you can see, a 32 bit word encodes `2^32 = 4'294'967'296` or approximately 4G different values whereas a 64 bit word represents `2^64` or about 16E different numbers.
 
-It is assumed that the [Utah Data Center](https://en.wikipedia.org/wiki/Utah_Data_Center) run by the National Security Agency (NSA) has a storage capacity of about 3 to 12 Exabytes. And [IDC](https://www.seagate.com/files/www-content/our-story/trends/files/idc-seagate-dataage-whitepaper.pdf) predicts that the collective sum of the world’s data will grow from 33 Zettabytes in 2018 to 175 ZB by 2025.
+It is assumed that the [Utah Data Center][UDC] run by the National Security Agency (NSA) has a storage capacity of about 3 to 12 Exabytes. And [IDC][IDC] predicts that the collective sum of the world’s data will grow from 33 Zettabytes in 2018 to 175 ZB by 2025.
+
+[UDC]: https://en.wikipedia.org/wiki/Utah_Data_Center
+[IDC]: https://www.seagate.com/files/www-content/our-story/trends/files/idc-seagate-dataage-whitepaper.pdf
 
 ## Bits, Bytes and Words <a name="section3"></a>
 
-The  ASCII graphics below show a 32 bit data word in so called *network order* as defined by [RFC 1700](https://tools.ietf.org/html/rfc1700). Network order is used to transmit data over communication links in a platform-independent way.
+The  ASCII graphics below show a 32 bit data word in so called *network order* as defined by [RFC 1700][RFC_1700]. Network order is used to transmit data over communication links in a platform-independent way.
 
 ``` <!-- language: lang-none -->
   0                   1                   2                   3
@@ -113,6 +123,8 @@ The  ASCII graphics below show a 32 bit data word in so called *network order* a
 The left-most `byte 0` which is the most significant byte (MSB) in the `32 bit word` is transmitted first, followed by `byte 1`, then `byte 2` and at last `byte 3`, the least significant byte (LSB). Within the left-most `byte 0`,  the left-most `bit 0` is the most significant bit that is transmitted first and `bit 7`,  the least significant bit, is transmitted last.
 
 Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comprising 4 bytes totals 8 nibbles. 
+
+[RFC_1700]: https://tools.ietf.org/html/rfc1700
 
 ## Base Conversions <a name="section4"></a>
 
@@ -228,5 +240,8 @@ Since the base is given, the *base prefix is* not required
 >>> int('2bf', 16)
 703
 ```
+Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
-Author:  [Andreas Steffen](mailto:andreas.steffen@strongsec.net) [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/)
+[AS]: mailto:andreas.steffen@strongsec.net
+[CC]: http://creativecommons.org/licenses/by/4.0/
+
