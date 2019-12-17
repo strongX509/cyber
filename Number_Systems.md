@@ -16,7 +16,7 @@ Natural numbers are usually represented in the [decimal numeral system][DEC_NUM]
 ```
 But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system][POS_NUM]. The generic positional notation for a number with an arbitrary base or radix is shown below.
 
-![Number = Digits_Radix](https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png "Terms used in positional numeral systems")
+![Number = Sum(Digit * Radix^Index)][POS_NUM_IMG]
 ```
 Number = ... + Digit*Radix^Index + ... + Digit_1*Radix^1 + Digit_0*Radix^0
 ```
@@ -40,6 +40,7 @@ are extensively used in computer and software engineering.
 [BIN_NUM]: https://en.wikipedia.org/wiki/Binary_number
 [OCT_NUM]: https://en.wikipedia.org/wiki/Octal
 [HEX_NUM]: https://en.wikipedia.org/wiki/Hexadecimal
+[POS_NUM_IMG]: https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png  "Terms used in positional numeral systems"
 
 ## Positional Numeral Systems <a name="section2"></a>
 
@@ -98,7 +99,7 @@ The next table lists the power of each digit position for the decimal, binary, o
 |**21**|       1Z|Zetta|**70**|&#8776;1Z |   -  |          |   -  |          |
 |**24**|       1Y|Yotta|**80**|&#8776;1Y |   -  |          |**20**|&#8776;1Y |
 
-As you can see, a 32 bit word encodes `2^32 = 4'294'967'296` or approximately 4G different values whereas a 64 bit word represents `2^64` or about 16E different numbers.
+As you can see, a 32 bit word encodes `2^32 = 4'294'967'296` or approximately 4G different values whereas a 64 bit word represents `2^64 = 18'446'744'073'709'551'616` or about 16E different numbers.
 
 It is assumed that the [Utah Data Center][UDC] run by the National Security Agency (NSA) has a storage capacity of about 3 to 12 Exabytes. And [IDC][IDC] predicts that the collective sum of the world’s data will grow from 33 Zettabytes in 2018 to 175 ZB by 2025.
 
