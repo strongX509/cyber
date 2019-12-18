@@ -52,7 +52,6 @@ We cause an overflow by adding `10` to an `uint32_t` set to the maximum supporte
 >>> x = c_uint32(0xffffffff)  # uint32_t
 >>> print(x)
 c_uint(4294967295)            # uint32_t maps to an unsigned int
->>> x.value -= 1
 >>> x.value += 10
 >>> print(x)
 c_uint(9)
@@ -63,7 +62,6 @@ We cause an overflow by squaring an `uint64_t` set to `2^32`
 >>> x = c_uint64(0x100000000) # uint64_t
 >>> print(x)
 c_ulong(4294967296)           # uint64_t maps to an unsigned long
->>> x.value -= 1
 >>> x.value *= x.value
 >>> print(x)
 c_ulong(0)
