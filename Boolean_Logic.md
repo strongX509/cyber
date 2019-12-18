@@ -11,6 +11,8 @@
 8. [DeMorgan's Theorems ](#section8)
 9. [Python Logical Operator Precedence](#section9)
 
+Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3) &nbsp; [PY4](#python4) &nbsp; [PY5](#python5) &nbsp; [PY6](#python6) &nbsp; [PY7](#python7) &nbsp; [PY8](#python8)
+
 ## Booleans <a name="section1"></a>
 
 Boolean values, logic and algebra are named after the British mathematician [George Boole][BOOL] (1815-1864).
@@ -25,7 +27,7 @@ Booleans can take on only two binary values:
 
 Boolean logic can easily be implemented by electronic circuits using transistors and thus forms the basis for all electronic computers.
 
-**Python**: Booleans are represented either by the integers `0` and `1`:
+**Python 1**: <a name="python1"></a>Booleans are represented either by the integers `0` and `1`:
 ```python
 >>> x = 0
 >>> y = 1
@@ -56,7 +58,7 @@ The Boolean AND operator `z = x AND y` has the following truth table:
 
 The AND operation can also be interpreted as the binary multiplication `z = x * y`.
 
-**Python:** Using the `&` operator, the AND operation can be applied to two bit arrays `x = 0b0011` and `y = 0b0101` both having a size of 4 bits to compute the output array `z = 0b0001` in the following *bit for bit* or *bitwise*  manner:
+**Python 2**: <a name="python2"></a>Using the `&` operator, the AND operation can be applied to two bit arrays `x = 0b0011` and `y = 0b0101` both having a size of 4 bits to compute the output array `z = 0b0001` in the following *bit for bit* or *bitwise*  manner:
 
 ```
 x:  0   0   1   1
@@ -89,7 +91,7 @@ The Boolean OR operator `z = x OR y` has the following truth table:
 
 **Rule**: The output `z` is  1 (TRUE) if at least one of the inputs `x` and `y` are 1 (TRUE).
 
-**Python:** Using the `|` operator, the OR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+**Python 3:** <a name="python3"></a>Using the `|` operator, the OR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
 ```python
 >>> x = 0b0011
 >>> y = 0b0101
@@ -114,7 +116,7 @@ The XOR operation can thus be interpreted as the inequality operation `z = x != 
 
 Therefore `x XOR x = 0` and it follows that `x XOR y XOR x = y XOR x XOR x = y XOR 0 = y`, i.e. `y` can always be retrieved after XOR-ing it with `x`, by XOR-ing the result with `x` again. This property is used e.g. by *stream ciphers* in crypto devices and *data scramblers* in communication systems.
 
-**Python:** Using the `^` operator, the XOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+**Python 4:** <a name="python4"></a>Using the `^` operator, the XOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
 
 ```python
 >>> x = 0b0011
@@ -148,7 +150,7 @@ The Boolean NOT operator `z = NOT x` has the following truth table:
 
 **Rule**: The output `z` is the inverse or complement of the input `x`.
 
-**Python:** Using the `~` operator, the NOT operationcan be applied in a *bitwise* manner to the bit array represented by the integer `0b0011`
+**Python 5:** <a name="python5"></a>Using the `~` operator, the NOT operation can be applied in a *bitwise* manner to the bit array represented by the integer `0b0011`
 
 ```python
 >>> x = 0b0011
@@ -173,7 +175,7 @@ The Boolean NAND operator `z = x NAND y = NOT (x AND y)` has the following truth
 The NAND operation is equivalent to an inverted AND operation and is
 implemented by transitor-based NAND gates used in electronic circuitry.
 
-**Python:** Using the `~` and `&` operators, the NAND operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+**Python 6:** <a name="python6"></a>Using the `~` and `&` operators, the NAND operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
 
 ```python
 >>> x = 0b0011
@@ -198,7 +200,7 @@ The Boolean NOR operator `z = x NOR y = NOT (x OR y)` has the following truth ta
 
 The NOR operation is equivalent to an inverted OR operation and is implemented by transitor-based NOR gates used in electronic circuitry.
 
-**Python:** Using the `~` and `|` operators, the NOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+**Python 7:**<a name="python7"></a> Using the `~` and `|` operators, the NOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
 
 ```python
 >>> x = 0b0011
@@ -216,7 +218,7 @@ Two theorems formulated by [Augustus de Morgan][MORG] (1806-1871) sometimes allo
 
 * The second DeMorgan theorem states the dual relationship `NOT (x OR y) = (NOT x) AND (NOT y)`, i.e. the NOR operation is equivalent to the AND operation with inverted inputs.
 
-**Python**: We implement these two relationships using the *bitwise* operators `&`, `|` and `~` and verify the equality of the left and right side of the expressions using the *bitwise* inequality operator `^`:
+**Python 8**: <a name="python8"></a>We implement these two relationships using the *bitwise* operators `&`, `|` and `~` and verify the equality of the left and right side of the expressions using the *bitwise* inequality operator `^`:
 
 ```python
 >>> x = 0b0011

@@ -5,6 +5,8 @@
 2. [Endianness](#section2)
 3. [Two's Complement](#section3)
 
+Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3)
+
 ## Integer Types <a name="section1"></a>
 
 The following portable integer types are defined by the [stdint.h][STDINT] header file standardized by  *POSIX.1-2017* which is equivalent to *IEEE Std 1003.1-2017* and *The Open Group Base Specifications Issue 7, 2018 edition*. 
@@ -22,7 +24,7 @@ The following portable integer types are defined by the [stdint.h][STDINT] heade
 
 The size of the C types `unsigned int`, `int`, `unsigned long` and `long` depends on the processor architecture (16, 32 or 64 bit). Therefore if exact size is an issue, the use of the standard types is strongly recommended.
 
-**Python**: In the following  examples we explore the cyclic overflow behaviour of the standard **unsigned** integer types by using the Python `ctypes` library.
+**Python 1**: <a name="python1"></a>In the following  examples we explore the cyclic overflow behaviour of the standard **unsigned** integer types by using the Python `ctypes` library.
 
 We cause an overflow by adding `1` to an `uint8_t` set to `UINT8_MAX`
 ```python
@@ -71,6 +73,8 @@ c_ulong(0)
 
 ## Endianness <a name="section2"></a>
 
+**Python 2**: <a name="python2"></a>
+
 ## Two's Complement <a name="section3"></a>
 
 ![Cyclic Addition](Twos_Complement_400.png "Cyclic Addition")
@@ -85,7 +89,7 @@ Generally *addition* by one is equivalent to a counter-clockwise rotation of the
 
 When the largest representable *positive* value is exceeded during addition, an *overflow* occurs and the result takes on the largest representable *negative* value. E.g. adding `1` to  `0111` (+7) results in `1000` (-8).
 
-**Python:** In the following  examples we explore the cyclic overflow behaviour of the standard **signed** integer types by using the Python `ctypes` library.
+**Python 3**: <a name="python3"></a>In the following  examples we explore the cyclic overflow behaviour of the standard **signed** integer types by using the Python `ctypes` library.
 
 We cause an overflow by adding `1` to an `int8_t` set to `INT8_MAX`
 ```python

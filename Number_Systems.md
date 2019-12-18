@@ -6,6 +6,8 @@
 3. [Bits, Bytes and Words](#section3)
 4. [Base Conversions](#section4)
 
+Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2)
+
 ## Representation of Natural Numbers <a name="section1"></a>
 
 The [natural numbers][NAT_NUM] consist of all positive integers 1, 2, 3, ... Often zero is also included, so that the natural numbers cover all non-negative integers 0, 1, 2, 3, ...
@@ -133,7 +135,7 @@ Each byte can be represented by 2 hexadecimal nibbles so that a 32 bit word comp
 
 ### Conversion from Decimal Representation
 
-**Python**: Base conversions from decimal to binary, octal or hexadecimal format are a piece of cake
+**Python 1**: <a name="python1"></a>Base conversions from decimal to binary, octal or hexadecimal format are a piece of cake
 
 ```python
 >>> bin(703)
@@ -211,7 +213,7 @@ Using the *byte mask* `0x00ff` we can determine the decimal value of each byte
 
 ### Conversion to Decimal Representation
 
-**Python**: In the reverse direction, binary, octal or hexadecimal *constants* can be displayed as decimal values
+**Python 2**: <a name="python2"></a>In the reverse direction, binary, octal or hexadecimal *constants* can be displayed as decimal values
 
 ```python
 >>> print(0b1010111111)
