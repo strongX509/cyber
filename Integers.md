@@ -5,8 +5,9 @@
 2. [Binary Addition](#section2)
 3. [Endianness](#section3)
 4. [Two's Complement](#section4)
+5. [Binary Subtraction](#section5)
 
-Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3)
+Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3) &nbsp; [PY4](#python4)
 
 ## Integer Types <a name="section1"></a>
 
@@ -198,6 +199,47 @@ c_long(4611686018427387904)      # int64_t maps to a long
 >>> print(x)
 c_long(-4611686018427387904)
 ```
+
+## Binary Subtraction <a name="section5"></a>
+
+On an electronic computer the binary [subtraction][SUB_NUM] `z = x - y` is implemented by adding the two's complement `-y` of the *minuend* `y` to the *subtrahend* `x` resulting in the *difference* `z`.
+```  <!-- language: lang-none -->
+    7   6   5   4   3   2   1   0    binary digit index
+  +---+---+---+---+---+---+---+---+
+1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |  carry bits
+  +---+---+---+---+---+---+---+---+
+  | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 |  x = 120
+  +---+---+---+---+---+---+---+---+    -
+  | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 0 |  y =  50
+  +---+---+---+---+---+---+---+---+
+  | 1 | 1 | 0 | 0 | 1 | 1 | 1 | 0 | -y = -50
+  +---+---+---+---+---+---+---+---+
+  | 0 | 1 | 0 | 0 | 0 | 1 | 1 | 0 |  z = x + (-y) = 70
+  +---+---+---+---+---+---+---+---+
+```
+**Python 4**: <a name="python4"></a>We show that binary substraction is equivalent to binary addition of the minuend's two's complement.
+
+```python
+>>> from ctypes import *
+>>> x = c_uint8(120)
+>>> y = c_uint8(50)
+>>> ym = c_uint8(-50)             # set two's complement -y
+>>> z = c_uint8()
+>>> format(x.value, '08b')
+'01111000'
+>>> format(y.value, '08b')
+'00110010'
+>>> format(ym.value, '08b')
+'11001110'                        # two's complement of y
+>>> z.value = x.value - y.value   # subtraction of y
+>>> print(z)
+c_ubyte(70)
+>>> z.value = x.value + ym.value  # addition of -y
+>>> print(z)
+c_ubyte(70)
+```
+
+[SUB_NUM]: https://en.wikipedia.org/wiki/Subtraction
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
