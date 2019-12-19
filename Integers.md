@@ -77,9 +77,13 @@ c_ulong(0)
 
 ## Two's Complement <a name="section3"></a>
 
-![Cyclic Addition](Twos_Complement_400.png "Cyclic Addition")
+The representation of *negative* or *signed* numbers is a non-trivial task. Instead of keeping a separate *sign flag* to differentiate between positive and negative numbers, electronic computers use the [two's complement][NEG_NUM] to encode negative numbers.
 
-**Inversion Rule**: `-x = ~x + 1` The negative `-x` of a number `x` in binary two's complement representation is computed by *bitwise* inversion of `x` and then adding `1` to the inverted value.
+The two's complement of an `N`-bit number is defined as its complement with respect to `2^N`. For instance with `N = 4`,  the two's complement of the four-bit number `0010` (+2) is `1110` (-2), because `0010 + 1110 = 10000` (16).  Since the carry bit for the most-significant bit of an `N`-bit number is discarded after an addition, which is equivalent to a modulo `2^N` operation,  `10000 mod 2^N` equals `0000`.
+
+![Cyclic Addition][NEG_NUM_IMG]
+
+**Two's Complement Rule**: `-x = ~x + 1` The negative value `-x` of a number `x` in binary two's complement representation is computed by *bitwise* inversion of `x` and then adding `1` to the inverted value.
 
 Thus the bit inversion of  `0010` (+2)  results in `1101` (-3) and by adding `1` gives the final value of  `1110` (-2). A special case is zero with its representation of `0000` that gets inverted to `1111` (-1) and by adding `1` becomes `0000` again.
 
@@ -88,6 +92,11 @@ Graphically the negation of a number can be interpreted as mirroring the circle 
 Generally *addition* by one is equivalent to a counter-clockwise rotation of the number position on the circle whereas *subtraction* by one translates into a clockwise rotation. 
 
 When the largest representable *positive* value is exceeded during addition, an *overflow* occurs and the result takes on the largest representable *negative* value. E.g. adding `1` to  `0111` (+7) results in `1000` (-8).
+
+It is also evident from the figure above that the most-significant bit of a negative number in two's complement representation is always set to `1`.
+
+[NEG_NUM]: https://en.wikipedia.org/wiki/Two%27s_complement
+[NEG_NUM_IMG]: Twos_Complement_400.png "Cyclic Addition"
 
 **Python 3**: <a name="python3"></a>In the following  examples we explore the cyclic overflow behaviour of the standard **signed** integer types by using the Python `ctypes` library.
 
