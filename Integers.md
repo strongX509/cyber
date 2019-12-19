@@ -128,7 +128,94 @@ c_ulong(0)
 
 ## Endianness <a name="section3"></a>
 
-**Python 2**: <a name="python2"></a>
+A 32 bit word (`uint16_t` or `int16_t`) comprises  four ordered bytes of memory:
+``` <!-- language: lang-none -->
+word32 = byte3 * 2^24  +  byte2 * 2^16  +  byte1 * 2^8  +  byte0
+```
+`byte0` is the Least Significant Byte (LSB) and `byte3` is the Most Significant Byte (MSB). On computer platforms there are two fundamentally different ways how these bytes are addressed in memory:
+
+**Big-Endian**
+``` <!-- language: lang-none -->
+addr      addr+1    addr+2    addr+3
++---------+---------+---------+---------+
+|  byte3  |  byte2  |  byte1  |  byte0  |
++---------+---------+---------+---------+
+  MSB                            LSB
+```
+*Big-endian* order is equivalent to *network order* where the MSB byte is transmitted first over a network connection and the LSB last.  Thus if a *big-endian* 32 bit word starts at address `addr` in memory then the MSB can be retrieved at  the word address `addr` and the LSB with an offset of 3 bytes at `addr+3`.
+
+**Little-Endian**
+``` <!-- language: lang-none -->
+addr      addr+1    addr+2    addr+3
++---------+---------+---------+---------+
+|  byte0  |  byte1  |  byte2  |  byte3  |
++---------+---------+---------+---------+
+  LSB                            MSB
+```
+If a *little-endian* 32 bit word is stored at address `addr` in memory then the LSB can be retrieved at  the word address `addr` and the MSB with an offset of 3 bytes at `addr+3`. If a *little-endian* multi-byte word has to be sent over a network connection in binary format then usually a conversion from *host order* to *network order* has to take place on the transmitting side and probably a conversion back to *host order* on the receiving side. The standard C library offers the following conversion functions:
+``` c
+uint32_t htonl(uint32_t hostlong);
+uint16_t htons(uint16_t hostshort);
+
+uint32_t ntohl(uint32_t netlong);
+uint16_t ntohs(uint16_t netshort);
+```
+All Intel, AMD  and RISC-V processors are *little-endian* whereas most ARM and Power PC processors are *bi-endian*, i.e. they can be configured by a software switch to work either in *big-endian* or *little-endian* mode.
+
+**Python 2**: <a name="python2"></a>By using `ctypes` address pointers and the` ctypes` cast mechanism, we try to get at the individual bytes of word structures
+
+We access the individual bytes of a `uint16_t` word and see that the storage order is *little-endian*:
+```python
+>>> from ctypes import *
+>>> uint16_p = POINTER(c_uint16)    # define uint16_t pointer type
+>>> uint8_p = POINTER(c_uint8)      # define uint8_t  pointer type
+>>> x = c_uint16(0xaabb)            # set uint16_t word to 0xaabb
+>>> x_addr = addressof(x)           # get memory address of x
+>>> hex(x_addr)
+'0x7f513d85ac48'                    # 48 bit memory address of x
+>>> x16_p = cast(x_addr, uint16_p)  # cast address to uint16_t pointer
+>>> hex(x16_p[0])                   # get first uint16_t array element
+'0xaabb'
+>>> x8_p = cast(x_addr, uint8_p)   # cast address to uint8_t pointer
+>>> hex(x8_p[0])                   # get first uint16_t array element
+'0xbb'                             # LSB is output
+>>> hex(x8_p[1])                   # get second uint16_t array element
+'0xaa'                             # MSB is output
+```
+
+We access the individual bytes of a `uint32_t` word and again *Little-Endianness* is observed.
+```python
+>>> from ctypes import *
+>>> uint8_p = POINTER(c_uint8)      # define uint8_t  pointer type
+>>> x = c_uint32(0xaabbccdd)        # set uint32_t word to 0xaabbccdd
+>>> x_addr = addressof(x)           # get memory address of x
+>>> hex(x_addr)
+'0x7f0a21408c48'                    # 48 bit memory address of x
+>>> x_addr = addressof(x)           # take storage address of x
+>>> hex(x_addr)                     # storage address of x
+'0x7f0a21408c48'
+>>> x8_p = cast(x_addr, uint8_p)    # cast address to uint8_t pointer
+>>> hex(x8_p[0])                    # get first uint8_t array element
+'0xdd'                              # LSB is output
+>>> hex(x8_p[1])                    # get second uint8_t array element
+'0xcc'
+>>> hex(x8_p[2])                    # get third uint8_t array element
+'0xbb'
+>>> hex(x8_p[3])                    # get fourth uint8_t array element
+'0xaa'                              # MSB is output
+```
+The same happens when accessing the individual bytes of an `uint64_t`
+```python
+from ctypes import *
+>>> uint8_p = POINTER(c_uint8)
+>>> x = c_uint64(0x11223344aabbccdd)
+>>> x_addr = addressof(x)
+>>> >>> hex(x_addr)
+'0x7f1740f59c48'
+>>> x8_p = cast(x_addr, uint8_p)
+>>> [hex(x8_p[i]) for i in range(0, 8)]
+['0xdd', '0xcc', '0xbb', '0xaa', '0x44', '0x33', '0x22', '0x11']
+```
 
 ## Two's Complement <a name="section4"></a>
 
