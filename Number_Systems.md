@@ -42,7 +42,7 @@ are extensively used in computer and software engineering.
 [BIN_NUM]: https://en.wikipedia.org/wiki/Binary_number
 [OCT_NUM]: https://en.wikipedia.org/wiki/Octal
 [HEX_NUM]: https://en.wikipedia.org/wiki/Hexadecimal
-[POS_NUM_IMG]: https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png  "Terms used in positional numeral systems"
+[POS_NUM_IMG]: https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Positional_notation_glossary-en.svg/500px-Positional_notation_glossary-en.svg.png  "Terms used in positional numeral systems, Michel Bakni CC BY-SA"
 
 ## Positional Numeral Systems <a name="section2"></a>
 
@@ -105,7 +105,10 @@ Thus a 32 bit word encodes `2^32 = 4'294'967'296` or approximately 4G different 
 
 The relative deviation &#948; between the scaling factors in the decimal and  binary number systems is given by  `2^k/10^n - 1` = `1.024^(n/3) - 1` and according to the table above amounts to 2.4% for`kilo` and 20.9% for `Yotta`. Transmission speeds like e.g. 64 kbit/s = 64'000 bits/s use decimal scaling factors whereas storage capacities like 64 kbytes = 65'536 bytes use binary scaling factors.
 
-It is assumed that the [Utah Data Center][UDC] run by the National Security Agency (NSA) has a storage capacity of about 3 to 12 Exabytes. And [IDC][IDC] predicts that the collective sum of the world’s data will grow from 33 Zettabytes in 2018 to 175 ZB by 2025.
+Actually it seems that storage device manufacturers have a rather opportunistic way of switching between decimal and binary scaling factors as a footnote from the *Western Digital Red drive* datasheet shows:
+>As used for storage capacity, one megabyte (MB) = one million bytes, one gigabyte (GB) = one billion bytes, and one terabyte (TB) = one trillion bytes. As used for buffer or cache, one megabyte (MB) = 1'048'576 bytes. As used for transfer rate or interface, megabyte per second (MB/s) = one million bytes per second, and gigabit per second (Gb/s).
+
+It is assumed that the [Utah Data Center][UDC] run by the National Security Agency (NSA) has a storage capacity of about 3 to 12 exabytes. And [IDC][IDC] predicts that the collective sum of the world’s data will grow from 33 zettabytes in 2018 to 175 ZB by 2025.
 
 [UDC]: https://en.wikipedia.org/wiki/Utah_Data_Center
 [IDC]: https://www.seagate.com/files/www-content/our-story/trends/files/idc-seagate-dataage-whitepaper.pdf
