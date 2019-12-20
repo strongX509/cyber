@@ -133,7 +133,7 @@ b'0123456789'
 The following python script `ascii.py` capitalizes lowercase characters in a byte array by unsetting `bit 5` in the ASCII encoding and then converts all uppercase characters to lowercase by setting `bit 5`.
 ```python
 #!/usr/bin/python3
-b_arr = bytearray("Oh my god! There are 20 students in the classroom, (\x007)", "ascii")
+b_arr = bytearray("Oh my god! There are 20 students in the classroom, (\x07)", "ascii")
 print(b_arr)
 
 # Capitalize lower case characters by unsetting bit 5
@@ -151,9 +151,9 @@ print(b_arr)
 The output of the script is
 ```python
 ./ascii.py
-bytearray(b'Oh my god! There are 20 students in the classroom, (\x007)')
-bytearray(b'OH MY GOD! THERE ARE 20 STUDENTS IN THE CLASSROOM, (\x007)')
-bytearray(b'oh my god! there are 20 students in the classroom, (\x007)')
+bytearray(b'Oh my god! There are 20 students in the classroom, (\x07)')
+bytearray(b'OH MY GOD! THERE ARE 20 STUDENTS IN THE CLASSROOM, (\x07)')
+bytearray(b'oh my god! there are 20 students in the classroom, (\x07)')
 ```
 
 [ASCII]: https://en.wikipedia.org/wiki/ASCII
