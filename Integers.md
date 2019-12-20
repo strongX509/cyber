@@ -164,7 +164,7 @@ All Intel, AMD  and RISC-V processors are *little-endian* whereas most ARM and P
 
 **Python 2**: <a name="python2"></a>By using `ctypes` address pointers and the` ctypes` cast mechanism, we try to get at the individual bytes of word structures
 
-We access the individual bytes of a `uint16_t` word and see that the storage order is *little-endian*:
+We access the individual bytes of a `uint16_t` word and see that the storage order is *little-endian*. By exchanging LSB and MSB the `uint16_t` word is converted from *host order* to *network order*.
 ```python
 >>> from ctypes import *
 >>> uint16_p = POINTER(c_uint16)    # define uint16_t pointer type
@@ -176,11 +176,16 @@ We access the individual bytes of a `uint16_t` word and see that the storage ord
 >>> x16_p = cast(x_addr, uint16_p)  # cast address to uint16_t pointer
 >>> hex(x16_p[0])                   # get first uint16_t array element
 '0xaabb'
->>> x8_p = cast(x_addr, uint8_p)   # cast address to uint8_t pointer
->>> hex(x8_p[0])                   # get first uint16_t array element
-'0xbb'                             # LSB is output
->>> hex(x8_p[1])                   # get second uint16_t array element
-'0xaa'                             # MSB is output
+>>> x8_p = cast(x_addr, uint8_p)    # cast address to uint8_t pointer
+>>> hex(x8_p[0])                    # get first uint16_t array element
+'0xbb'                              # LSB is output
+>>> hex(x8_p[1])                    # get second uint16_t array element
+'0xaa'                              # MSB is output
+>>> tmp = x8_p[0]                   # put LSB into temporary storage
+>>> x8_p[0] = x8_p[1]               # MSB and LSB exchange positions
+>>> x8_p[1] = tmp                   # conversion to network order completed
+>>> hex(x16_p[0])
+'0xbbaa'                            # LSB and MSB are not in host order anymore
 ```
 
 We access the individual bytes of a `uint32_t` word and again *Little-Endianness* is observed.
