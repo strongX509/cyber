@@ -155,6 +155,14 @@ bytearray(b'Oh my god! There are 20 students in the classroom, (\x07)')
 bytearray(b'OH MY GOD! THERE ARE 20 STUDENTS IN THE CLASSROOM, (\x07)')
 bytearray(b'oh my god! there are 20 students in the classroom, (\x07)')
 ```
+As a comparison we show how conversion to uppercase or lowercase can be easily done using Python string functions.
+```python
+>>> b_str = 'Oh my god! There are 20 students in the classroom, (\x07)'
+>>> b_str.upper()
+'OH MY GOD! THERE ARE 20 STUDENTS IN THE CLASSROOM, (\x07)'
+>>> b_str.lower()
+'oh my god! there are 20 students in the classroom, (\x07)'
+```
 
 [ASCII]: https://en.wikipedia.org/wiki/ASCII
 
