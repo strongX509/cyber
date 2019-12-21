@@ -3,8 +3,9 @@
 ## Table of Contents
 1. [ASCII](#section1)
 2. [UTF-8](#section2)
+3. [Base64](#section3)
 
-Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2)
+Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2)&nbsp; [PY3](#python3)
 
 ## ASCII <a name="section1"></a>
 
@@ -260,6 +261,114 @@ b'd0add0b92c20d0b6d0bbd0bed0b12120d093d0b4d0b520d182d183d0b73f20d09fd180d18fd187
 [PAN_DE]: https://de.wikipedia.org/wiki/Pangramm#Liste_deutscher_Pangramme
 [PAN_FR]: https://fr.wikipedia.org/wiki/Pangramme#Avec_les_signes_diacritiques
 [PAN_RU]: https://de.wikipedia.org/wiki/Pangramm#Russisch
+
+## Base64 <a name="section3"></a>
+The [Base64][Base64] scheme encodes `N` binary bytes into 4 * &#8968;`N/3`&#8969; printable ASCII characters and thus allows to carry data stored in binary formats across channels that only reliably support 7-bit US-ASCII text content. The encoding is shown below:
+
+``` <!-- language: lang-none -->
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|     Binary Byte A     |     Binary Byte B     |     Binary Byte C     |
++--+--+--+---+---+---+--+--+--+--+--+---+---+---+--+--+--+--+--+--+--+--+
+ A0 A1 A2 A3 A4 A5 A6 A7 B0 B1 B2 B3 B4 B5 B6 B7 C0 C1 C2 C3 C4 C5 C6 C7  Bits
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  Base64 Char 1  |  Base64 Char 2  |  Base64 Char 3  |  Base64 Char 4  |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+```
+The 24 bits `A0..A7, B0..B7, C0..C7` of 3 consecutive bytes `A`, `B` and `C` are split into 4 groups of 6 bits each which are then mapped to the 64 printable US-ASCII characters `A..Z`, `a..z`,  `0..9`,  `+` and `/` according to the table listed below.
+
+|  I | Binary |Char|  I | Binary |Char|  I | Binary |Char|  I | Binary |Char|
+|:--:|:------:|:--:|:--:|:------:|:--:|:--:|:------:|:--:|:--:|:------:|:--:|
+|  0 | 000000 |  A | 16 | 010000 |  Q | 32 | 100000 |  g | 48 | 110000 |  w |
+|  1 | 000001 |  B | 17 | 010001 |  R | 33 | 100001 |  h | 49 | 110001 |  x |
+|  2 | 000010 |  C | 18 | 010010 |  S | 34 | 100010 |  i | 50 | 110010 |  y |
+|  3 | 000011 |  D | 19 | 010011 |  T | 35 | 100011 |  j | 51 | 110011 |  z |
+|  4 | 000100 |  E | 20 | 010100 |  U | 36 | 100100 |  k | 52 | 110100 |  0 |
+|  5 | 000101 |  F | 21 | 010101 |  V | 37 | 100101 |  l | 53 | 110101 |  1 |
+|  6 | 000110 |  G | 22 | 010110 |  W | 38 | 100110 |  m | 54 | 110110 |  2 |
+|  7 | 000111 |  H | 23 | 010111 |  X | 39 | 100111 |  n | 55 | 110111 |  3 |
+|  8 | 001000 |  I | 24 | 011000 |  Y | 40 | 101000 |  o | 56 | 111000 |  4 |
+|  9 | 001001 |  J | 25 | 011001 |  Z | 41 | 101001 |  p | 57 | 111001 |  5 |
+| 10 | 001010 |  K | 26 | 011010 |  a | 42 | 101010 |  q | 58 | 111010 |  6 |
+| 11 | 001011 |  L | 27 | 011011 |  b | 43 | 101011 |  r | 59 | 111011 |  7 |
+| 12 | 001100 |  M | 28 | 011100 |  c | 44 | 101100 |  s | 60 | 111100 |  8 |
+| 13 | 001101 |  N | 29 | 011101 |  d | 45 | 101101 |  t | 61 | 111101 |  9 |
+| 14 | 001110 |  O | 30 | 011110 |  e | 46 | 101110 |  u | 62 | 111110 |  + |
+| 15 | 001111 |  P | 31 | 011111 |  f | 47 | 101111 |  v | 63 | 111111 |  / |
+
+If the total number  `N` of bytes contained in a binary blob is not an exact multiple of three, i.e. `N mod 3 != 0` then one or two bytes remain at the end of the data block which have to be processed separately.:
+
+For the case `N mod 3 = 2`,  the remaining 16 bits `A0..A7, B0..B7` are padded by two zero bits and the resulting 18 bits can then be mapped to 3 Base64 characters. In order to indicate the padding, an additional `=` ASCII character is appended, making the total number of Base64 characters a multiple of four.
+``` <!-- language: lang-none -->
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|     Binary Byte A     |     Binary Byte B     |
++--+--+--+---+---+---+--+--+--+--+--+---+---+---+
+ A0 A1 A2 A3 A4 A5 A6 A7 B0 B1 B2 B3 B4 B5 B6 B7  0  0                    Bits
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  Base64 Char 1  |  Base64 Char 2  |  Base64 Char 3  |        =        |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+```
+
+For the case `N mod 3 = 1`,  the remaining 8 bits `A0..A7` are padded by four zero bits and the resulting 12 bits can then be mapped to 2 Base64 characters. In order to indicate the padding, two additional `=` ASCII characters are appended, making the total number of Base64 characters a multiple of four.
+``` <!-- language: lang-none -->
++--+--+--+--+--+--+--+--+
+|     Binary Byte A     |
++--+--+--+---+---+---+--+
+ A0 A1 A2 A3 A4 A5 A6 A7 0  0  0  0                                       Bits
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|  Base64 Char 1  |  Base64 Char 2  |        =        |        =        |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+```
+
+**Python 3**: <a name="python3"></a> Use the built-in Base64 encoding and decoding functions and compare it to Hex encoding.
+
+Base64 encoding of 6 binary bytes:
+```python
+>>> import base64, binascii
+>>> data_bin = bytes([0x11, 0x22, 0x33, 0x44, 0x55, 0x66])
+>>> [format(x, '08b') for x in data_bin]
+['00010001', '00100010', '00110011', '01000100', '01010101', '01100110']
+>>> data_hex = binascii.hexlify(data_bin)
+>>> print(data_hex, len(data_hex))
+b'112233445566' 12
+>>> data_b64 = base64.b64encode(data_bin)
+>>> print(data_b64, len(data_b64))
+b'ESIzRFVm' 8
+>>> [format(x, '08b') for x in base64.b64decode(data_b64)]
+['00010001', '00100010', '00110011', '01000100', '01010101', '01100110']
+```
+Base64 encoding of 5 binary bytes requires padding:
+```python
+>>> import base64, binascii
+>>> data_bin = bytes([0x11, 0x22, 0x33, 0x44, 0x55])
+>>> [format(x, '08b') for x in data_bin]
+['00010001', '00100010', '00110011', '01000100', '01010101']
+>>> data_hex = binascii.hexlify(data_bin)
+>>> print(data_hex, len(data_hex))
+b'1122334455' 10
+>>> data_b64 = base64.b64encode(data_bin)
+>>> print(data_b64, len(data_b64))
+b'ESIzRFU=' 8
+>>> [format(x, '08b') for x in base64.b64decode(data_b64)]
+['00010001', '00100010', '00110011', '01000100', '01010101']
+```
+Base64 encoding of 4 binary bytes requires padding:
+```python
+>>> import base64, binascii
+>>> data_bin = bytes([0x11, 0x22, 0x33, 0x44])
+>>> [format(x, '08b') for x in data_bin]
+['00010001', '00100010', '00110011', '01000100']
+>>> data_hex = binascii.hexlify(data_bin)
+>>> print(data_hex, len(data_hex))
+b'11223344' 8
+>>> data_b64 = base64.b64encode(data_bin)
+>>> print(data_b64, len(data_b64))
+b'ESIzRA==' 8
+>>> [format(x, '08b') for x in base64.b64decode(data_b64)]
+['00010001', '00100010', '00110011', '01000100']
+```
+
+[Base64]: https://en.wikipedia.org/wiki/Base64
+
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
 [AS]: mailto:andreas.steffen@strongsec.net
