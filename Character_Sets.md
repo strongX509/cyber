@@ -8,7 +8,7 @@ Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2)
 
 ## ASCII <a name="section1"></a>
 
-Still one of the widely used character encodings for electronic communication is [ASCII][ASCII] , the *American Standard Code for Information Interchange*. The output of `man ascii` shown below lists the original 7-bit US-ASCII code covering only latin characters used in English plus a lot of control characters used in the early days of modem links, teleprinters and console terminals.
+Still one of the most widely used character encodings for electronic communication is [ASCII][ASCII] , the *American Standard Code for Information Interchange*. The output of `man ascii` shown below lists the original 7-bit US-ASCII code covering only latin characters used in English plus a lot of control characters used in the early days of modem links, teleprinters and console terminals.
 
 |Oct|Dec|Hex|Char                     |Oct|Dec|Hex|Char                   |
 |:-:|--:|:-:|:------------------------|:-:|--:|:-:|:----------------------|
@@ -160,8 +160,98 @@ bytearray(b'oh my god! there are 20 students in the classroom, (\x07)')
 
 ## UTF-8 <a name="section2"></a>
 
-**Python 2**: <a name="python2"></a>
+The 8-bit Unicode Transformation Format [UTF-8][UTF-8] is a variable width character encoding capable of encoding all 1,112,064 valid code points in the *Unicode  (Universal Coded Character Set)* using one to four 8-bit bytes.
 
+It was designed for backward compatibility with ASCII. Code points with lower numerical values, which tend to occur more frequently, are encoded using fewer bytes. The first 128 characters of Unicode, which correspond one-to-one with ASCII, are encoded using a single byte with the same binary value as ASCII, so that valid ASCII text is valid UTF-8-encoded Unicode as well. Since ASCII bytes do not occur when encoding non-ASCII code points into UTF-8, UTF-8 is safe to use within most programming and document languages that interpret certain ASCII characters in a special way, such as "/" (slash) in filenames, "\" (backslash) in escape sequences, and "%" in printf.
+
+Since the restriction of the Unicode code-space to 21-bit values in 2003, UTF-8 is defined to encode code points in one to four bytes, depending on the number of significant bits in the numerical value of the code point. The following table shows the structure of the encoding. The x characters are replaced by the bits of the code point. If the number of significant bits is no more than seven, the first line applies; if no more than 11 bits, the second line applies, and so on.
+
+|Number of Bytes|Bits for code point|First code point|Last code point|Byte 1|Byte 2|Byte 3|Byte 4|
+|:-:|:--:|-------:|--------:|--------:|--------:|--------:|--------:|
+| 1	|  7 |  U+0000|   U+007F| 0xxxxxxx| 		|         |         |
+| 2 | 11 |	U+0080|   U+07FF| 110xxxxx| 10xxxxxx|		  |         |
+| 3 | 16 |	U+0800|   U+FFFF| 1110xxxx| 10xxxxxx| 10xxxxxx|         |
+| 4	| 21 | U+10000| U+10FFFF| 11110xxx| 10xxxxxx| 10xxxxxx| 10xxxxxx|
+
+* The first 128 characters (US-ASCII) need one byte.
+* The next 1,920 characters need two bytes to encode, which covers the remainder of almost all *Latin-script* alphabets, and also *Greek*, *Cyrillic*, *Coptic*, *Armenian*, *Hebrew*, *Arabic*, *Syriac*, *Thaana* and *N'Ko* alphabets, as well as *Combining Diacritical Marks*.
+* Three bytes are needed for characters in the rest of the *Basic Multilingual Plane*, which contains virtually all characters in common use, including most *Chinese*, *Japanese* and *Korean* characters.
+* Four bytes are needed for characters in the other planes of Unicode, which include less common CJK characters, various historic scripts, *mathematical symbols*, and *emoji* (pictographic symbols).
+
+**Python 2**: <a name="python2"></a>We analyze a some UTF-8 encoding examples.
+
+We start with a very simple example containing the ASCII character `a`, the German character `ä`, the French character `à` and a latin small character a with a ring below `ḁ`:
+```python
+>>> import binascii
+>>> chr_str = u'aäàḁ'
+>>> print(chr_str, len(chr_str))
+aäàḁ 4
+>>> [c for c in chr_str]
+['a', 'ä', 'à', 'ḁ']
+>>> [binascii.hexlify(bytearray(c, 'utf-8')) for c in chr_str]
+[b'61', b'c3a4', b'c3a0', b'e1b881']
+>>> chr_arr = bytearray(chr_str, 'utf-8')
+>>> print(chr_arr, len(chr_arr))
+bytearray(b'a\xc3\xa4\xc3\xa0\xe1\xb8\x81') 8
+>>> [format(x, '08b') for x in chr_arr]
+['01100001', '11000011', '10100100', '11000011', '10100000', '11100001', '10111000', '10000001']
+>>> chr_hex = binascii.hexlify(chr_arr)
+>>> print(chr_hex, len(chr_hex))
+b'61c3a4c3a0e1b881' 16
+```
+Here is the UTF-8 encoding of a German [pangram][PAN_DE] containing 35 different characters:
+```python
+>>> import binascii
+>>> chr_str = u'„Fix, Schwyz!“, quäkt Jürgen blöd vom Paß'
+>>> print(chr_str, len(chr_str))
+„Fix, Schwyz!“, quäkt Jürgen blöd vom Paß 41
+>>> [c for c in chr_str]
+['„', 'F', 'i', 'x', ',', ' ', 'S', 'c', 'h', 'w', 'y', 'z', '!', '“', ',', ' ', 'q', 'u', 'ä', 'k', 't', ' ', 'J', 'ü', 'r', 'g', 'e', 'n', ' ', 'b', 'l', 'ö', 'd', ' ', 'v', 'o', 'm', ' ', 'P', 'a', 'ß']
+[binascii.hexlify(bytearray(c, 'utf-8')) for c in chr_str]
+[b'e2809e', b'46', b'69', b'78', b'2c', b'20', b'53', b'63', b'68', b'77', b'79', b'7a', b'21', b'e2809c', b'2c', b'20', b'71', b'75', b'c3a4', b'6b', b'74', b'20', b'4a', b'c3bc', b'72', b'67', b'65', b'6e', b'20', b'62', b'6c', b'c3b6', b'64', b'20', b'76', b'6f', b'6d', b'20', b'50', b'61', b'c39f']
+>>> chr_arr = bytearray(chr_str, 'utf-8')
+>>> print(chr_arr, len(chr_arr))
+bytearray(b'\xe2\x80\x9eFix, Schwyz!\xe2\x80\x9c, qu\xc3\xa4kt J\xc3\xbcrgen bl\xc3\xb6d vom Pa\xc3\x9f') 49
+chr_hex = binascii.hexlify(chr_arr)
+>>> print(chr_hex, len(chr_hex))
+b'e2809e4669782c2053636877797a21e2809c2c207175c3a46b74204ac3bc7267656e20626cc3b66420766f6d205061c39f' 98
+```
+And here the UTF-8 encoding of a French [pangram][PAN_FR] containing all 45 characters of the French language:
+```python
+>> import binascii
+>>> chr_str = u'Dès Noël, où un zéphyr haï me vêt de glaçons würmiens, je dîne d’exquis rôtis de bœuf au kir, à l’aÿ d’âge mûr, &cætera.'
+>>> print(chr_str, len(chr_str))
+Dès Noël, où un zéphyr haï me vêt de glaçons würmiens, je dîne d’exquis rôtis de bœuf au kir, à l’aÿ d’âge mûr, &cætera. 120
+>>> [c for c in chr_str]
+['D', 'è', 's', ' ', 'N', 'o', 'ë', 'l', ',', ' ', 'o', 'ù', ' ', 'u', 'n', ' ', 'z', 'é', 'p', 'h', 'y', 'r', ' ', 'h', 'a', 'ï', ' ', 'm', 'e', ' ', 'v', 'ê', 't', ' ', 'd', 'e', ' ', 'g', 'l', 'a', 'ç', 'o', 'n', 's', ' ', 'w', 'ü', 'r', 'm', 'i', 'e', 'n', 's', ',', ' ', 'j', 'e', ' ', 'd', 'î', 'n', 'e', ' ', 'd', '’', 'e', 'x', 'q', 'u', 'i', 's', ' ', 'r', 'ô', 't', 'i', 's', ' ', 'd', 'e', ' ', 'b', 'œ', 'u', 'f', ' ', 'a', 'u', ' ', 'k', 'i', 'r', ',', ' ', 'à', ' ', 'l', '’', 'a', 'ÿ', ' ', 'd', '’', 'â', 'g', 'e', ' ', 'm', 'û', 'r', ',', ' ', '&', 'c', 'æ', 't', 'e', 'r', 'a', '.']
+[binascii.hexlify(bytearray(c, 'utf-8')) for c in chr_str]
+[b'44', b'c3a8', b'73', b'20', b'4e', b'6f', b'c3ab', b'6c', b'2c', b'20', b'6f', b'c3b9', b'20', b'75', b'6e', b'20', b'7a', b'c3a9', b'70', b'68', b'79', b'72', b'20', b'68', b'61', b'c3af', b'20', b'6d', b'65', b'20', b'76', b'c3aa', b'74', b'20', b'64', b'65', b'20', b'67', b'6c', b'61', b'c3a7', b'6f', b'6e', b'73', b'20', b'77', b'c3bc', b'72', b'6d', b'69', b'65', b'6e', b'73', b'2c', b'20', b'6a', b'65', b'20', b'64', b'c3ae', b'6e', b'65', b'20', b'64', b'e28099', b'65', b'78', b'71', b'75', b'69', b'73', b'20', b'72', b'c3b4', b'74', b'69', b'73', b'20', b'64', b'65', b'20', b'62', b'c593', b'75', b'66', b'20', b'61', b'75', b'20', b'6b', b'69', b'72', b'2c', b'20', b'c3a0', b'20', b'6c', b'e28099', b'61', b'c3bf', b'20', b'64', b'e28099', b'c3a2', b'67', b'65', b'20', b'6d', b'c3bb', b'72', b'2c', b'20', b'26', b'63', b'c3a6', b'74', b'65', b'72', b'61', b'2e']
+>>> chr_arr = bytearray(chr_str, 'utf-8')
+>>> print(chr_arr, len(chr_arr))
+bytearray(b'D\xc3\xa8s No\xc3\xabl, o\xc3\xb9 un z\xc3\xa9phyr ha\xc3\xaf me v\xc3\xaat de gla\xc3\xa7ons w\xc3\xbcrmiens, je d\xc3\xaene d\xe2\x80\x99exquis r\xc3\xb4tis de b\xc5\x93uf au kir, \xc3\xa0 l\xe2\x80\x99a\xc3\xbf d\xe2\x80\x99\xc3\xa2ge m\xc3\xbbr, &c\xc3\xa6tera.') 142
+>>> chr_hex = binascii.hexlify(chr_arr)
+>>> print(chr_hex, len(chr_hex))
+b'44c3a873204e6fc3ab6c2c206fc3b920756e207ac3a970687972206861c3af206d652076c3aa7420646520676c61c3a76f6e732077c3bc726d69656e732c206a652064c3ae6e652064e280996578717569732072c3b47469732064652062c5937566206175206b69722c20c3a0206ce2809961c3bf2064e28099c3a26765206dc3bb722c202663c3a6746572612e' 284
+```
+Finally the UTF-8 encoding of a Russian [pangram][PAN_FR] containing all 33 characters of the Russian language:
+```python
+>>> import binascii
+>>> chr_str = u'Эй, жлоб! Где туз? Прячь юных съёмщиц в шкаф'
+>>> print(chr_str, len(chr_str))
+Эй, жлоб! Где туз? Прячь юных съёмщиц в шкаф 44
+>>> [binascii.hexlify(bytearray(c, 'utf-8')) for c in chr_str]
+[b'd0ad', b'd0b9', b'2c', b'20', b'd0b6', b'd0bb', b'd0be', b'd0b1', b'21', b'20', b'd093', b'd0b4', b'd0b5', b'20', b'd182', b'd183', b'd0b7', b'3f', b'20', b'd09f', b'd180', b'd18f', b'd187', b'd18c', b'20', b'd18e', b'd0bd', b'd18b', b'd185', b'20', b'd181', b'd18a', b'd191', b'd0bc', b'd189', b'd0b8', b'd186', b'20', b'd0b2', b'20', b'd188', b'd0ba', b'd0b0', b'd184']
+>>> chr_arr = bytearray(chr_str, 'utf-8')
+>>> print(chr_arr, len(chr_arr))
+bytearray(b'\xd0\xad\xd0\xb9, \xd0\xb6\xd0\xbb\xd0\xbe\xd0\xb1! \xd0\x93\xd0\xb4\xd0\xb5 \xd1\x82\xd1\x83\xd0\xb7? \xd0\x9f\xd1\x80\xd1\x8f\xd1\x87\xd1\x8c \xd1\x8e\xd0\xbd\xd1\x8b\xd1\x85 \xd1\x81\xd1\x8a\xd1\x91\xd0\xbc\xd1\x89\xd0\xb8\xd1\x86 \xd0\xb2 \xd1\x88\xd0\xba\xd0\xb0\xd1\x84') 77
+>>> chr_hex = binascii.hexlify(chr_arr)
+>>> print(chr_hex, len(chr_hex))
+b'd0add0b92c20d0b6d0bbd0bed0b12120d093d0b4d0b520d182d183d0b73f20d09fd180d18fd187d18c20d18ed0bdd18bd18520d181d18ad191d0bcd189d0b8d18620d0b220d188d0bad0b0d184' 154
+```
+[UTF-8]: https://en.wikipedia.org/wiki/UTF-8
+[PAN_DE]: https://de.wikipedia.org/wiki/Pangramm#Liste_deutscher_Pangramme
+[PAN_FR]: https://fr.wikipedia.org/wiki/Pangramme#Avec_les_signes_diacritiques
+[PAN_RU]: https://de.wikipedia.org/wiki/Pangramm#Russisch
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
 [AS]: mailto:andreas.steffen@strongsec.net
