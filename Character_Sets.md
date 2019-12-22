@@ -140,7 +140,7 @@ print(b_arr)
 # Capitalize lower case characters by unsetting bit 5
 for i in range(0, len(b_arr)):
     if b_arr[i] > 0x60 and b_arr[i] < 0x7b:
-        b_arr[i] &= 0xdf
+        b_arr[i] &= 0b11011111
 print(b_arr)
 
 # Convert all uppercase characters to lowercase by setting bit 5
