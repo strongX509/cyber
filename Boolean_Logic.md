@@ -78,6 +78,25 @@ and actually generates all four possible states of the AND truth table listed ab
 
 The auxiliary format parameter`#06b` controls the output of a minimum of `6` characters, starting with the `0b` base-2 prefix (activated by `#`) and followed by 4 binary bits with leading zeroes (activated by `0`).
 
+The following example shows how the `AND` operator can be used to test the flags at positions `0` and `5` in a bit array by applying a corresponding bit mask:
+```
+        7   6   5   4   3   2   1   0
+      +---+---+---+---+---+---+---+---+
+flags | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 0 |
+      +---+---+---+---+---+---+---+---+
+mask0 |   |   |   |   |   |   |   | 1 |
+      +---+---+---+---+---+---+---+---+
+mask5 |   |   | 1 |   |   |   |   |   |
+      +---+---+---+---+---+---+---+---+
+```
+```python
+>>> flags = 0b00100110
+>>> (flags & 1) != 0          # test flag at position 0
+False
+>>> (flags & (1 << 5)) != 0   # test flag at position 5
+True
+```
+
 ## The OR Operator <a name="section3"></a>
 
 The Boolean OR operator `z = x OR y` has the following truth table:
@@ -97,6 +116,26 @@ The Boolean OR operator `z = x OR y` has the following truth table:
 >>> y = 0b0101
 >>> format(x | y, '#06b')
 '0b0111'
+```
+The following example shows how the `OR` operator can be used to set the flags at positions `0`,  `2` and `7` in a bit array by applying a corresponding bit mask:
+```
+        7   6   5   4   3   2   1   0
+      +---+---+---+---+---+---+---+---+
+flags | 0 | 0 | 1 | 0 | 0 | 1 | 1 | 0 |
+      +---+---+---+---+---+---+---+---+
+mask  | 1  |  |   |   |   | 1 |   | 1 |
+      +---+---+---+---+---+---+---+---+
+```
+```python
+>>> flags = 0b00100110
+>>> format(flags, '#010b')
+'0b00100110'
+>>> mask = 1 | (1 << 2) | (1 << 7)
+>>> format(mask, '#010b')
+'0b10000101'
+>>> flags |= mask
+>>> format(flags, '#010b')
+'0b10100111'
 ```
 
 ## The XOR Operator <a name="section4"></a>
