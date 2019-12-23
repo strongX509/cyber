@@ -5,13 +5,14 @@
 2. [The AND Operator](#section2)
 3. [The OR Operator](#section3)
 4. [The XOR Operator](#section4)
-5. [The NOT Operator](#section5)
-6. [The NAND Operator](#section6)
-7. [The NOR Operator](#section7)
-8. [DeMorgan's Theorems ](#section8)
-9. [Python Logical Operator Precedence](#section9)
+5. [Binary Full-Adder](#section5)
+5. [The NOT Operator](#section6)
+6. [The NAND Operator](#section7)
+7. [The NOR Operator](#section8)
+8. [De Morgan's Theorems](#section9)
+9. [Python Logical Operator Precedence](#section10)
 
-Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3) &nbsp; [PY4](#python4) &nbsp; [PY5](#python5) &nbsp; [PY6](#python6) &nbsp; [PY7](#python7) &nbsp; [PY8](#python8)
+Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3) &nbsp; [PY4](#python4) &nbsp; [PY5](#python5) &nbsp; [PY6](#python6) &nbsp; [PY7](#python7) &nbsp; [PY8](#python8) &nbsp; [PY9](#python9)
 
 ## Booleans <a name="section1"></a>
 
@@ -178,7 +179,53 @@ The *associativity* and *commutativity*  properties of the XOR operator are used
 ```
 The plaintext bits `0b0101` are encrypted on the transmitting side by the secret cipher stream bits `0b0011` and decrypted on the receiving side by applying the same cipher stream sequence `0b0011` again.
 
-## The NOT Operator <a name="section5"></a>
+## Binary Full-Adder <a name="section5"></a>
+
+The binary [full-adder][ADDER] digital circuit shown below adds the binary bits `A` and `B` plus the carry bit `Cin` from the previous adder stage. The output is the sum `S` and the carry bit `Cout` to be considered by the next adder stage.
+
+!["Binary Full Adder"][ADDER_IMG]
+
+The sum is computed as `S = Z XOR Cin`, using the intermediate sum `Z = A XOR B`. Apparently the XOR operator is equivalent to the binary addition `z = (x + y) mod 2`. The output carry is computed as `Cout = (Z AND Cin) OR (A AND B)` and uses the intermediate sum as well.
+
+The full-adder has the following truth table:
+
+| A | B |Cin|Cout |  S  |
+|---|---|---|-----|-----|
+| 0 | 0 | 0 |**0**|**0**|
+| 0 | 0 | 1 |**0**|**1**|
+| 0 | 1 | 0 |**0**|**1**|
+| 0 | 1 | 1 |**1**|**0**|
+| 1 | 0 | 0 |**0**|**1**|
+| 1 | 0 | 1 |**1**|**0**|
+| 1 | 1 | 0 |**1**|**0**|
+| 1 | 1 | 1 |**1**|**1**|
+
+**Python 5:** <a name="python5"></a>We test all states of the full-adder's truth table:
+
+```python
+>>> a = 0b00001111
+>>> b = 0b00110011
+>>> z = a ^ b
+>>> cin = 0b01010101
+>>> s = z ^ cin
+>>> cout = (z & cin) | (a & b)
+>>> format(a, '08b')
+'00001111'
+>>> format(b, '08b')
+'00110011'
+>>> format(z, '08b')
+'00111100'
+>>> format(cin, '08b')
+'01010101'
+>>> format(cout, '08b')
+'00010111'
+>>> format(s, '08b')
+'01101001'
+```
+[ADDER]: https://en.wikipedia.org/wiki/Adder_(electronics)
+[ADDER_IMG]: https://upload.wikimedia.org/wikipedia/commons/6/69/Full-adder_logic_diagram.svg "Binary Full Adder, CC0"
+
+## The NOT Operator <a name="section6"></a>
 
 The Boolean NOT operator `z = NOT x` has the following truth table:
 
@@ -189,7 +236,7 @@ The Boolean NOT operator `z = NOT x` has the following truth table:
 
 **Rule**: The output `z` is the inverse or complement of the input `x`.
 
-**Python 5:** <a name="python5"></a>Using the `~` operator, the NOT operation can be applied in a *bitwise* manner to the bit array represented by the integer `0b0011`
+**Python 6:** <a name="python6"></a>Using the `~` operator, the NOT operation can be applied in a *bitwise* manner to the bit array represented by the integer `0b0011`
 
 ```python
 >>> x = 0b0011
@@ -198,7 +245,7 @@ The Boolean NOT operator `z = NOT x` has the following truth table:
 ```
 Since Python treats the bit array as a signed integer, a bit mask `0b1111` corresponding to the number of elements in the bit array must be applied after the inversion in order to convert the result into an unsigned integer.
 
-## The NAND Operator <a name="section6"></a>
+## The NAND Operator <a name="section7"></a>
 
 The Boolean NAND operator `z = x NAND y = NOT (x AND y)` has the following truth table:
 
@@ -214,7 +261,7 @@ The Boolean NAND operator `z = x NAND y = NOT (x AND y)` has the following truth
 The NAND operation is equivalent to an inverted AND operation and is
 implemented by transitor-based NAND gates used in electronic circuitry.
 
-**Python 6:** <a name="python6"></a>Using the `~` and `&` operators, the NAND operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+**Python 7:** <a name="python7"></a>Using the `~` and `&` operators, the NAND operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
 
 ```python
 >>> x = 0b0011
@@ -224,7 +271,7 @@ implemented by transitor-based NAND gates used in electronic circuitry.
 ```
 Since Python treats the bit array as a signed integer, a bit mask `0b1111` corresponding to the number of elements in the bit array must be applied after the inversion in order to convert the result into an unsigned integer.
 
-## The NOR Operator <a name="section7"></a>
+## The NOR Operator <a name="section8"></a>
 
 The Boolean NOR operator `z = x NOR y = NOT (x OR y)` has the following truth table:
 
@@ -239,7 +286,7 @@ The Boolean NOR operator `z = x NOR y = NOT (x OR y)` has the following truth ta
 
 The NOR operation is equivalent to an inverted OR operation and is implemented by transitor-based NOR gates used in electronic circuitry.
 
-**Python 7:**<a name="python7"></a> Using the `~` and `|` operators, the NOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
+**Python 8:**<a name="python8"></a> Using the `~` and `|` operators, the NOR operation can be applied in a *bitwise* manner to the two bit arrays represented by the integers `0b0011` and `0b0101`
 
 ```python
 >>> x = 0b0011
@@ -249,7 +296,7 @@ The NOR operation is equivalent to an inverted OR operation and is implemented b
 ```
 Since Python treats the bit array as a signed integer, a bit mask `0b1111` corresponding to the number of elements in the bit array must be applied after the inversion in order to convert the result into an unsigned integer.
 
-## DeMorgan's Theorems <a name="section8"></a>
+## De Morgan's Theorems <a name="section9"></a>
 
 Two theorems formulated by [Augustus de Morgan][MORG] (1806-1871) sometimes allow the simplification of complex Boolean expressions:
 
@@ -257,7 +304,7 @@ Two theorems formulated by [Augustus de Morgan][MORG] (1806-1871) sometimes allo
 
 * The second DeMorgan theorem states the dual relationship `NOT (x OR y) = (NOT x) AND (NOT y)`, i.e. the NOR operation is equivalent to the AND operation with inverted inputs.
 
-**Python 8**: <a name="python8"></a>We implement these two relationships using the *bitwise* operators `&`, `|` and `~` and verify the equality of the left and right side of the expressions using the *bitwise* inequality operator `^`:
+**Python 9**: <a name="python9"></a>We implement these two relationships using the *bitwise* operators `&`, `|` and `~` and verify the equality of the left and right side of the expressions using the *bitwise* inequality operator `^`:
 
 ```python
 >>> x = 0b0011
