@@ -274,7 +274,7 @@ The [Base64][Base64] scheme encodes `N` binary bytes into 4 * &#8968;`N/3`&#8969
 |  Base64 Char 1  |  Base64 Char 2  |  Base64 Char 3  |  Base64 Char 4  |
 +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 ```
-The 24 bits `A0..A7, B0..B7, C0..C7` of 3 consecutive bytes `A`, `B` and `C` are split into 4 groups of 6 bits each which are then mapped to the 64 printable US-ASCII characters `A..Z`, `a..z`,  `0..9`,  `+` and `/` according to the table listed below.
+The 24 bits `A0..A7, B0..B7, C0..C7` of 3 consecutive bytes `A`, `B` and `C` are split into 4 groups of 6 bits each that are then mapped to the 64 printable US-ASCII characters `A..Z`, `a..z`,  `0..9`,  `+` and `/` according to the table listed below.
 
 |  I | Binary |Char|  I | Binary |Char|  I | Binary |Char|  I | Binary |Char|
 |:--:|:------:|:--:|:--:|:------:|:--:|:--:|:------:|:--:|:--:|:------:|:--:|
