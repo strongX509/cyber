@@ -5,6 +5,7 @@ A collection of cyber tutorials including Python examples:
 * [Boolean Logic](Boolean_Logic.md)
 * [Number Systems](Number_Systems.md)
 * [Integers](Integers.md)
+* [Floating Point Numbers](Floating_Point_Numbers.md)
 * [Character Sets](Character_Sets.md)
 
 About the author:
