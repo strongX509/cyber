@@ -293,3 +293,7 @@ c_double(1.1)
 
 [IEEE_754_DOUBLE]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 
+Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
+
+[AS]: mailto:andreas.steffen@strongsec.net
+[CC]: http://creativecommons.org/licenses/by/4.0/
