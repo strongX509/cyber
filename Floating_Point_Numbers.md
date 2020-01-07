@@ -180,6 +180,14 @@ c_float(1.100000023841858)
 >>> format(x32_p[0], '032b')
 '0 01111111 00011001100110011001101'
 ```
+Therefore the evaluation of the discriminant &#916; = `b^2 - 4ac` of a quadratic equation with the coefficients given below does not result in an exact value of `0.0`
+```python
+>>> a = c_float(0.25)
+>>> b = c_float(0.1)
+>>> c = c_float(0.01)
+>>> print(b.value*b.value - 4*a.value*c.value)
+5.21540644005114e-10
+```
 If some internal computing error occurs (e.g. the division 0/0) then the value is set to `NaN` (not a number)
 ```python
 >>> x32_p[0] = 0b01111111110000000000000000000000
@@ -289,6 +297,14 @@ Decimal fractions cannot be represented exactly because `10 = 2*5` is not a powe
 c_double(1.1)
 >>> format(x64_p[0], '064b')
 '0 01111111111 0001100110011001100110011001100110011001100110011010'
+```
+Therefore the evaluation of the discriminant &#916; = `b^2 - 4ac` of a quadratic equation with the coefficients given below does not result in an exact value of `0.0`
+```python
+>>> a = c_double(0.25)
+>>> b = c_double(0.1)
+>>> c = c_double(0.01)
+>>> print(b.value*b.value - 4*a.value*c.value)
+1.734723475976807e-18
 ```
 
 [IEEE_754_DOUBLE]: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
