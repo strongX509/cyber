@@ -2,6 +2,7 @@
 
 ## Table of Contents
 1. [Simple Example Algorithm](#section1)
+2. [x86-64 Processor Architecture](#section2)
 
 C language programs: &nbsp;[C1](#c1)
 
@@ -125,6 +126,35 @@ n = 3, s = 6
 [Inferior 1 (process 27469) exited normally]
 ```
 We exit the debugger with `quit`.
+
+##  x86-64 Processor Architecture <a name="section2"></a>
+
+The  [x86_64][X86_CS] processor architecture has sixteen 64-bit registers that may also be accessed as 32-, 16-, or 8-bit registers. The register names are as follows:
+
+|64 bit (bytes 0..7)|32 bit (bytes 0..3)|16 bit (bytes 0..1)|8 bit (byte 0)|function calls|
+|:-----:|:-----:|:-----:|:-----:|:-------------|
+| %rax  | %eax  | %ax   | %al   | return value |
+| %rcx  | %ecx  | %cx   | %cl   | parameter 4  |
+| %rdx  | %edx  | %dx   | %dl   | parameter 3  |
+| %rbx  | %ebx  | %bx   | %bl   | callee-saved |
+| %rsi  | %esi  | %si   | %sil  | parameter 2  |
+| %rdi  | %edi  | %di   | %dil  | parameter 1  |
+| %rsp  | %esp  | %sp   | %spl  | stack pointer |
+| %rbp  | %ebp  | %bp   | %bpl  | callee-saved* |
+| %r8   | %r8d  | %r8w  | %r8b  | parameter 5  |
+| %r9   | %r9d  | %r9w  | %r9b  | parameter 6  |
+| %r10  | %r10d | %r10w | %r10b |              |
+| %r11  | %r11d | %r11w | %r11b |              |
+| %r12  | %r12d | %r12w | %r12b | callee-saved |
+| %r13  | %r13d | %r13w | %r13b | callee-saved |
+| %r14  | %r14d | %r14w | %r14b | callee-saved |
+| %r15  | %r15d | %r15w | %r15b | callee-saved |
+
+\* *%rbp is optionally used as base or frame pointer (disabled by -fomit-frame-pointer gcc option)*
+
+In the assembly code of the function `sum` listed in the previous section we see that the 32-bit `%edi` register is used for the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program.
+
+[X86_CS]: https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
