@@ -1,16 +1,27 @@
 # Programs
 
 ## Table of Contents
-1. [Simple Example Algorithm](#section1)
+1. [From Algorithm to Program](#section1)
 2. [x86-64 Processor Architecture](#section2)
 
 C language programs: &nbsp;[C1](#c1)
 
 Assembler exercises: &nbsp; [ASM1](#asm1) &nbsp; [ASM2](#asm2)
 
-## Simple Example Algorithm <a name="section1"></a>
+## From Algorithm to Program <a name="section1"></a>
 
-Our simple example algorithm computes  the sum of the first `n` natural numbers in a `while` loop.
+The following simple algorithm defined in *pseudo code*  computes and returns the sum of the first `n` natural numbers:
+
+---
+**function** *sum(n)*  
+ &nbsp; s &#8592; 0  
+ &nbsp; while n > 0  
+ &nbsp; &nbsp;  s &#8592; s + n  
+ &nbsp; &nbsp;  n &#8592; n - 1  
+ &nbsp; return s
+
+---
+This algorithm can be easily implemented in the C programming language.
 
 **C 1**: <a name="c1"></a> The C program [sum.c](sum.c) consists of a function `sum()`and a main program `main()`and is listed with line numbers below:
 
@@ -23,7 +34,7 @@ Our simple example algorithm computes  the sum of the first `n` natural numbers 
  6 {
  7     int s = 0;
  8
- 9     while (n)
+ 9     while (n > 0)
 10     {
 11         s += n;
 12         n -= 1;
@@ -70,8 +81,8 @@ Dump of assembler code for function sum:
    0x00000000004005c4 <+14>: mov    -0x14(%rsp),%eax    ; copy current n into register
    0x00000000004005c8 <+18>: add    %eax,-0x4(%rsp)     ; add n to s
    0x00000000004005cc <+22>: subl   $0x1,-0x14(%rsp)    ; decrease n by one
-   0x00000000004005d1 <+27>: cmpl   $0x0,-0x14(%rsp)    ; compare if n == 0
-   0x00000000004005d6 <+32>: jne    0x4005c4 <sum+14>   ; jump to head of loop if n != 0
+   0x00000000004005d1 <+27>: cmpl   $0x0,-0x14(%rsp)    ; compare n with 0
+   0x00000000004005d6 <+32>: jg     0x4005c4 <sum+14>   ; jump to head of loop if n > 0
    0x00000000004005d8 <+34>: mov    -0x4(%rsp),%eax     ; copy result s into register
    0x00000000004005dc <+38>: retq                       ; return to main program
 End of assembler dump.
