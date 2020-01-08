@@ -3,15 +3,15 @@
 A collection of cyber tutorials including Python examples:
 
 ## Computing Foundations
-* [Boolean Logic](Boolean_Logic.md)
-* [Number Systems](Number_Systems.md)
-* [Integers](Integers.md)
-* [Floating Point Numbers](Floating_Point_Numbers.md)
-* [Character Sets](Character_Sets.md)
+* [Boolean Logic](Computing_Foundations/Boolean_Logic.md)
+* [Number Systems](Computing_Foundations/Number_Systems.md)
+* [Integers](Computing_Foundations/Integers.md)
+* [Floating Point Numbers](Computing_Foundations/Floating_Point_Numbers.md)
+* [Character Sets](Computing_Foundations/Character_Sets.md)
 
 ## Computing Systems
 
-* [Programs](Programs.md)
+* [Programs](Computing_Systems/Programs.md)
 
 About the author:
 
