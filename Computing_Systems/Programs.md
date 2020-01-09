@@ -97,7 +97,12 @@ Starting program: /home/andi/cyber/sum 3
 Breakpoint 1, sum (n=3) at sum.c:11
 11	        s += n;
 ```
-We can print out the current state of the variables and then `continue` the program execution until the *breakpoint* is hit again in the next iteration of the loop
+The 64 bit `rip` *instruction pointer register* points to the next machine instruction to be executed and can be displayed with the following command
+```assembly
+(gdb) x/i $rip
+=> 0x4005c4 <sum+14>:	mov    -0x14(%rsp),%eax
+```
+We can print out the current state of the sum variable `s` and then `continue` the program execution until the *breakpoint* is hit again in the next iteration of the loop
 ```assembly
 (gdb) print s
 $1 = 0
@@ -116,18 +121,24 @@ Breakpoint 1, sum (n=1) at sum.c:11
 (gdb) print s
 $3 = 5
 ```
-With `n = 1` we are now in the last iteration and `step` through the program execution *line by line* until we reach the exit from the `while`loop
+With `n = 1` we are now in the last iteration and `step` through the program execution *line by line* until we reach the exit from the `while` loop
 ```assembly
 (gdb) step
 12	        n -= 1;
+(gdb) x/i $rip
+=> 0x4005cc <sum+22>:	subl   $0x1,-0x14(%rsp)
 (gdb) print s
 $4 = 6
 (gdb) step
-9	    while (n)
+9	    while (n > 0)
+(gdb) x/i $rip
+=> 0x4005d1 <sum+27>:	cmpl   $0x0,-0x14(%rsp)
 (gdb) print n
 $5 = 0
 (gdb) step
 14	    return s;
+(gdb) x/i $rip
+=> 0x4005d8 <sum+34>:	mov    -0x4(%rsp),%eax
 (gdb) continue
 Continuing.
 ```
