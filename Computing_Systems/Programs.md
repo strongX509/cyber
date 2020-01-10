@@ -2,11 +2,13 @@
 
 ## Table of Contents
 1. [From Algorithm to Program](#section1)
-2. [x86-64 Processor Architecture](#section2)
+2. [Disassembling Object Code](#section2)
+3. [x86-64 Processor Architecture](#section3)
+4. [List of gdb Shell Commands](#section4)
 
 C language programs: &nbsp;[C1](#c1)
 
-Assembler exercises: &nbsp; [ASM1](#asm1) &nbsp; [ASM2](#asm2)
+Assembler exercises: &nbsp; [ASM1](#asm1)
 
 ## From Algorithm to Program <a name="section1"></a>
 
@@ -67,7 +69,13 @@ and execute the binary program `sum` on the command line
 > ./sum 3
 n = 3, s = 6
 ```
+
+## Disassembling Object Code <a name="section2"></a>
+
+The `gdb` debugger is a very powerful command line tool for the dynamic analysis and debugging of object code.
+
 **ASM 1**: <a name="asm1"></a>With the command 
+
 ```console
 > gdb sum
 ```
@@ -121,7 +129,7 @@ Breakpoint 1, sum (n=1) at sum.c:11
 (gdb) print s
 $3 = 5
 ```
-With `n = 1` we are now in the last iteration and `step` through the program execution *line by line* until we reach the exit from the `while` loop
+With `n = 1` we are now in the last iteration and `step` through the program execution *line by line* until we reach the exit from the `while` loop. If a program line comprises more than one machine instruction then `stepi` allows to step through them.
 ```assembly
 (gdb) step
 12	        n -= 1;
@@ -135,6 +143,10 @@ $4 = 6
 => 0x4005d1 <sum+27>:	cmpl   $0x0,-0x14(%rsp)
 (gdb) print n
 $5 = 0
+(gdb) stepi
+0x00000000004005d6	9	    while (n > 0)
+(gdb) x/i $rip
+=> 0x4005d6 <sum+32>:	jg     0x4005c4 <sum+14>
 (gdb) step
 14	    return s;
 (gdb) x/i $rip
@@ -149,32 +161,50 @@ n = 3, s = 6
 ```
 We exit the debugger with `quit`.
 
-##  x86-64 Processor Architecture <a name="section2"></a>
+##  x86-64 Processor Architecture <a name="section3"></a>
 
 The  [x86_64][X86_CS] processor architecture has sixteen 64-bit registers that may also be accessed as 32-, 16-, or 8-bit registers. The register names are as follows:
 
 |64 bit (bytes 0..7)|32 bit (bytes 0..3)|16 bit (bytes 0..1)|8 bit (byte 0)|function calls|
-|:-----:|:-----:|:-----:|:-----:|:-------------|
-| %rax  | %eax  | %ax   | %al   | return value |
-| %rcx  | %ecx  | %cx   | %cl   | parameter 4  |
-| %rdx  | %edx  | %dx   | %dl   | parameter 3  |
-| %rbx  | %ebx  | %bx   | %bl   | callee-saved |
-| %rsi  | %esi  | %si   | %sil  | parameter 2  |
-| %rdi  | %edi  | %di   | %dil  | parameter 1  |
+|:-----:|:-----:|:-----:|:-----:|:--------------|
+| %rax  | %eax  | %ax   | %al   | return value  |
+| %rcx  | %ecx  | %cx   | %cl   | parameter 4   |
+| %rdx  | %edx  | %dx   | %dl   | parameter 3   |
+| %rbx  | %ebx  | %bx   | %bl   | callee-saved  |
+| %rsi  | %esi  | %si   | %sil  | parameter 2   |
+| %rdi  | %edi  | %di   | %dil  | parameter 1   |
 | %rsp  | %esp  | %sp   | %spl  | stack pointer |
 | %rbp  | %ebp  | %bp   | %bpl  | callee-saved* |
-| %r8   | %r8d  | %r8w  | %r8b  | parameter 5  |
-| %r9   | %r9d  | %r9w  | %r9b  | parameter 6  |
-| %r10  | %r10d | %r10w | %r10b |              |
-| %r11  | %r11d | %r11w | %r11b |              |
-| %r12  | %r12d | %r12w | %r12b | callee-saved |
-| %r13  | %r13d | %r13w | %r13b | callee-saved |
-| %r14  | %r14d | %r14w | %r14b | callee-saved |
-| %r15  | %r15d | %r15w | %r15b | callee-saved |
+| %r8   | %r8d  | %r8w  | %r8b  | parameter 5   |
+| %r9   | %r9d  | %r9w  | %r9b  | parameter 6   |
+| %r10  | %r10d | %r10w | %r10b |               |
+| %r11  | %r11d | %r11w | %r11b |               |
+| %r12  | %r12d | %r12w | %r12b | callee-saved  |
+| %r13  | %r13d | %r13w | %r13b | callee-saved  |
+| %r14  | %r14d | %r14w | %r14b | callee-saved  |
+| %r15  | %r15d | %r15w | %r15b | callee-saved  |
 
 \* *%rbp is optionally used as base or frame pointer (disabled by -fomit-frame-pointer gcc option)*
 
-In the assembly code of the function `sum` listed in the previous section we see that the 32-bit `%edi` register is used for the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program.
+In the [assembly code](#asm1) of the function `sum` listed in the [previous section](#asm1) we see that the 32-bit `%edi` register is used for the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program. Also the current value of the stack pointer `%rsp` is used to reference memory locations on the stack.
+
+##  List of gdb Shell Commands <a name="section4"></a>
+
+| Command        | Action                                          |
+|:---------------|:------------------------------------------------|
+| help [command] | Help information on a command                   |
+| break `11`     | Set a breakpoint on line `11`                   |
+| run [options]  | Start program execution with optional arguments |
+| continue       | Continue program execution                      |
+| step           | Execute next program line                       |
+| stepi          | Execute next machine instruction                |
+| print `n`      | Value of variable `n`                           |
+| print `&n`     | Memory address of variable `n`                  |
+| print/x `$rax` | Value of register `%rax` in hex format          |
+| x/i `$rip`     | Value of instruction pointer and next instruction |
+| info frame     | Information on instruction pointer and stack     |
+| x/8xb `0x7fffffffa0b6` | Shows 8 bytes starting from `0x7fffffffa0b6` |
+| quit           | Exit gdb                                         |
 
 [X86_CS]: https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
 
