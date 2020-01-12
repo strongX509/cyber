@@ -4,10 +4,11 @@
 1. [Architecture Overview](#section1)
 4. [The x86-64 Registers](#section2)
 4. [The x86-64 Stack](#section3)
+5. [Code Optimization](#section4)
 
 C language programs: &nbsp;[C1](#c1)
 
-Assembler exercises: &nbsp; [ASM1](#asm1)
+Assembler exercises: &nbsp; [ASM1](#asm1) &nbsp; [ASM2](#asm2)
 
 ##  Architecture Overview <a name="section1"></a>
 
@@ -164,13 +165,13 @@ Dump of assembler code for function main:
    0x000055555555470d <+51>:  movw   $0xccdd,0x1a(%rsp)     ; initialize v16 on stack
    0x0000555555554714 <+58>:  movb   $0xee,0x19(%rsp)       ; initialize v8  on stack
    0x0000555555554719 <+63>:  movl   $0xf,0x24(%rsp)        ; initialize len=15 on stack
-=> 0x0000555555554721 <+71>:  movzbl 0x19(%rsp),%ecx        ; copy v8  to %ecx (arg 4)
-   0x0000555555554726 <+76>:  movzwl 0x1a(%rsp),%edx        ; copy v16 to %edx (arg 3)
+=> 0x0000555555554721 <+71>:  movzbl 0x19(%rsp),%ecx        ; copy v8  to %ecx (arg4)
+   0x0000555555554726 <+76>:  movzwl 0x1a(%rsp),%edx        ; copy v16 to %edx (arg3)
    0x000055555555472b <+81>:  lea    0x30(%rsp),%rdi        ; copy buf addr to %rdi
-   0x0000555555554730 <+86>:  mov    0x20(%rsp),%esi        ; copy v32 to %esi (arg 2)
+   0x0000555555554730 <+86>:  mov    0x20(%rsp),%esi        ; copy v32 to %esi (arg2)
    0x0000555555554734 <+90>:  mov    0x28(%rsp),%rax        ; copy v64 to %rax
-   0x0000555555554739 <+95>:  mov    %rdi,%r8               ; copy buf addr to %r8 (arg 5)
-   0x000055555555473c <+98>:  mov    %rax,%rdi              ; copy v64 to %rdi (arg 1)
+   0x0000555555554739 <+95>:  mov    %rdi,%r8               ; copy buf addr to %r8 (arg5)
+   0x000055555555473c <+98>:  mov    %rax,%rdi              ; copy v64 to %rdi (arg1)
    0x000055555555473f <+101>: callq  0x5555555547a3 <incr>  ; call incr
    0x0000555555554744 <+106>: lea    0x159(%rip),%rdi       # 0x5555555548a4
    ...
@@ -323,6 +324,9 @@ Breakpoint 2, main (argc=1, argv=0x7fffffffddc8) at ctypes.c:19
 19	    printf("buf = 0x");
 gdb) x/i $rip
 => 0x555555554744 <main+106>: lea    0x159(%rip),%rdi        # 0x5555555548a4
+```
+We see that the instruction pointer of `main` has been retrieved from the stack by the `retq` instruction and that the execution resumes at `0x555555554744`.
+```assembly
 (gdb) x/15b 0x7fffffffdcc0
 0x7fffffffdcc0:	0x78	0x66	0x55	0x44	0x33	0x22	0x11	0x00
 0x7fffffffdcc8:	0xbc	0xaa	0x99	0x88	0xde	0xcc	0xef
@@ -331,11 +335,69 @@ Continuing.
 buf = 0x7866554433221100bcaa9988deccef
 [Inferior 1 (process 26884) exited normally]
 ```
-We see that the instruction pointer of `main` has been retrieved from the stack by the `retq` instruction and that the execution continues at `0x555555554744`.
-
 Before leaving the main program we dump the contents of the `buf` byte array containing the final result.
+
+## Code Optimization <a name="section4"></a>
+
+Now we are going to have a look at how object code is improved through applying compiler optimization using the `-O2` gcc option:
+```console
+> gcc -ggdb -fomit-frame-pointer -O2 -o ctypes ctypes.c incr.c
+```
+**ASM 2**: <a name="asm2"></a>Let's examine the optimized assembly code of `main` and `incr`
+```assembly
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x00005555555545f0 <+0>:  push   %r12                   ; save %r12 on stack
+   0x00005555555545f2 <+2>:  push   %rbp                   ; save %rbp on stack
+=> 0x00005555555545f3 <+3>:  mov    $0xee,%ecx             ; initialize v8  in %ecx (arg4)
+   0x00005555555545f8 <+8>:  push   %rbx                   ; save %rbx on stack
+   0x00005555555545f9 <+9>:  mov    $0xccdd,%edx           ; initialize v16 in %edx (arg3)
+   0x00005555555545fe <+14>: mov    $0x8899aabb,%esi       ; initialize v32 in %esi (arg2)
+   0x0000555555554603 <+19>: movabs $0x11223344556677,%rdi ; initialize v64 in %rdi (arg1)
+   0x000055555555460d <+29>: lea    0x229(%rip),%rbp       # 0x55555555483d
+   0x0000555555554614 <+36>: sub    $0x20,%rsp             ; local stack size: 0x20
+   0x0000555555554618 <+40>: mov    %rsp,%rbx              ; copy buf addr to %rbx
+   0x000055555555461b <+43>: mov    %rbx,%r8               ; copy buf addr to %r8 (arg5)
+   0x000055555555461e <+46>: lea    0xf(%rbx),%r12         ; copy addr above buf to %r12
+   0x0000555555554622 <+50>: mov    %fs:0x28,%rax          ; initialize canary
+   0x000055555555462b <+59>: mov    %rax,0x18(%rsp)        ; copy canary to stack
+   0x0000555555554630 <+64>: xor    %eax,%eax              ; zero %eax
+   0x0000555555554632 <+66>: callq  0x555555554790 <incr>  ; call incr
+   0x0000555555554637 <+71>: lea    0x1f6(%rip),%rsi       # 0x555555554834
+   ...
+   End of assembler dump
+(gdb) disassemble incr
+Dump of assembler code for function incr:
+=> 0x0000555555554790 <+0>:  add    $0x1,%rdi              ; add 1 to v64
+   0x0000555555554794 <+4>:  add    $0x1,%esi4             ; add 1 to v32
+   0x0000555555554797 <+7>:  add    $0x1,%edx              ; add 1 to v16
+   0x000055555555479a <+10>: add    $0x1,%ecx              ; add 1 to v8
+   0x000055555555479d <+13>: mov    %rdi,(%r8)             ; copy v64 to %buf[ 0]
+   0x00005555555547a0 <+16>: mov    %esi,0x8(%r8)          ; copy v32 to %buf[ 8]
+   0x00005555555547a4 <+20>: mov    %dx,0xc(%r8)           ; copy v16 to %buf[12]
+   0x00005555555547a9 <+25>: mov    %cl,0xe(%r8)           ; copy v8  to %buf[14]
+   0x00005555555547ad <+29>: retq                          ; return
+   End of assembler dump
+```
+With the exception of the large `buf` byte array all variables are strictly kept in fast processor registers. This is also visible in the stack memory map below:
+
+|  stack address   |%rsp offset|variable    | owner |
+|:----------------:|:---------:|:-----------|:------|
+| `0x7fffffffdd18` |           | saved %rip | &#8592; %rsp of shell |
+| `0x7fffffffdd10` |           | saved %r12 | main  |
+| `0x7fffffffdd08` |           | saved %rbp | main  |
+| `0x7fffffffdd00` |           | saved %rbx | main  |
+| `0x7fffffffdcf8` |   +0x18   | canary     | main  |
+| `0x7fffffffdce0` |   +0x00   | buf        | &#8592; %rsp of main |
+| `0x7fffffffdcd8` |   -0x00   | saved %rip | &#8592; %rsp of incr |
+
+Actually the reason that the `incr()`  function was moved to a separate file `incr.c` was the fact that the optimizing compiler just got rid of the function call and implemented the functionality directly in `main` as in-line code.
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
 [AS]: mailto:andreas.steffen@strongsec.net
 [CC]: http://creativecommons.org/licenses/by/4.0/
+
+```
+
+```
