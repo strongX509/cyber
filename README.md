@@ -12,6 +12,7 @@ A collection of cyber tutorials including Python examples:
 ## Computing Systems
 
 * [Programs](Computing_Systems/Programs.md)
+* [Processor Architecture](Computing_Systems/Processor_Architecture.md)
 
 About the author:
 
