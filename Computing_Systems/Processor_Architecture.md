@@ -141,7 +141,7 @@ buf = 0x7866554433221100bcaa9988deccef
 **ASM 1**: <a name="asm1"></a>We load the  `ctypes` binary into the debugger, set breakpoints on lines `17`  and `19` of `main`, i.e. just before and after `incr()` is called and then run the program
 
 ```assembly
-> gdb sum
+> gdb ctypes
 (gdb) break 17
 Breakpoint 1 at 0x771: file ctypes.c, line 17.
 (gdb) break 19
@@ -446,42 +446,45 @@ In the main program [dyn_ctypes.c](dyn_ctypes.c) we call the function `incr()` t
  3
  4 #include "dyn_incr.h"
  5
- 6 /* global initialized variables */
- 7 uint64_t v64 = 0x0011223344556677;
- 8 uint32_t v32 = 0x8899aabb;
- 9
-10 /* global constants */
-11 const uint16_t v16 = 0xccdd;
-12 const uint8_t  v8  = 0xee;
-13
-14 int main(int argc, char** argv)
-15 {
-16     uint8_t *buf1, *buf2;
-17     const int len = sizeof(uint64_t) + sizeof(uint32_t) +
-18                     sizeof(uint16_t) + sizeof(uint8_t);
-19     int i;
-20
-21     buf1 = incr(v64, v32, v16, v8, 1);
-22     buf2 = incr(v64, v32, v16, v8, 2);
+ 6 /* global uninitialized variables */
+ 7 uint8_t buf[16]
+ 8    
+ 9 /* global initialized variables */
+10 uint64_t v64 = 0x0011223344556677;
+11 uint32_t v32 = 0x8899aabb;
+12
+13 /* global constants */
+14 const uint16_t v16 = 0xccdd;
+15 const uint8_t  v8  = 0xee;
+16
+17 int main(int argc, char** argv)
+18 {
+19     uint8_t *buf1, *buf2;
+20     const int len = sizeof(uint64_t) + sizeof(uint32_t) +
+21                     sizeof(uint16_t) + sizeof(uint8_t);
+22     int i;
 23
-24     printf("buf1 = 0x");
-25     for (i = 0; i < len; i++)
-26     {
-27         printf("%02x", buf1[i]);
-28     }
-29     printf("\n");
-30
-31     printf("buf2 = 0x");
-32     for (i = 0; i < len; i++)
-33     {
-34         printf("%02x", buf2[i]);
-35     }
-36     printf("\n");
-37
-38     free(buf1);
-39     free(buf2);
-40     exit(0);
-41 }
+24     buf1 = incr(v64, v32, v16, v8, 1);
+25     buf2 = incr(v64, v32, v16, v8, 2);
+26
+27     printf("buf1 = 0x");
+28     for (i = 0; i < len; i++)
+29     {
+30         printf("%02x", buf1[i]);
+31     }
+32     printf("\n");
+33
+34     printf("buf2 = 0x");
+35     for (i = 0; i < len; i++)
+36     {
+37         printf("%02x", buf2[i]);
+38     }
+39     printf("\n");
+40
+41     free(buf1);
+42     free(buf2);
+43     exit(0);
+44 }
 ```
 We compile the program with optimization level `-O2` and execute `dyn_ctypes`
 ```console
@@ -501,7 +504,7 @@ Starting program: /home/andi/cyber/Computing_Systems/dyn_ctypes
 Breakpoint 1, incr (v64=4822678189205112, v32=<optimized out>, v16=52446, v8=<optimized out>, n=<optimized out>) at dyn_incr.c:24
 24	}
 ```
-The optimized machine code uses a lot of registers so that some of them must be saved to the stack first. We also notice with surprise that the call of the  `htoln()` library function has been replaced by the `bswap` instruction and `htols()` by a `ror 0x8` instruction which rotates a 16-bit word by 8 bits thus swapping the order of the two bytes.
+The optimized machine code uses a lot of registers so that some of them must be saved to the stack first. We also notice with surprise that the call of the  `htonl()` library function has been replaced by the `bswap` instruction and `htons()` by a `ror 0x8` instruction which rotates a 16-bit word by 8 bits thus swapping the order of the two bytes.
 ```assembly
 Dump of assembler code for function incr:
    0x0000555555554890 <+0>:   push   %r15               ; save %r15 on stack
@@ -546,7 +549,7 @@ Dump of assembler code for function incr:
    0x0000555555554900 <+112>: retq                      ; return
 End of assembler dump.
 ```
-The `info frame` shows that seven registers have been saved on the stack.
+The `info frame` shows that besides the  `%rip` instruction pointer all six [callee-saved registers](#section2) have been pushed on the stack.
 ```assembly
 (gdb) info frame
 Stack level 0, frame at 0x7fffffffdcd0:
@@ -580,15 +583,18 @@ $2 = 0x0000555555756280
 ```
 Then we return to the main program
 ```assembly
-(gdb) step
-main (argc=<optimized out>, argv=<optimized out>) at dyn_ctypes.c:24
-24	    printf("buf1 = 0x");
+(gdb) break dyn_ctypes.c:27
+Breakpoint 2 at 0x55555555470e: file dyn_ctypes.c, line 27.
+(gdb) continue
+Continuing.
+Breakpoint 2, main (argc=<optimized out>, argv=<optimized out>) at dyn_ctypes.c:28
+28	    for (i = 0; i < len; i++)
 ```
 Again we notice that the optimized code needs a lot of registers
 ```assembly
  (gdb) disassemble main
 Dump of assembler code for function main:
-=> 0x0000555555554680 <+0>:   mov    0x20098a(%rip),%esi   # 0x555555755010 <v32> (arg2)
+   0x0000555555554680 <+0>:   mov    0x20098a(%rip),%esi   # 0x555555755010 <v32> (arg2)
    0x0000555555554686 <+6>:   mov    0x20098b(%rip),%rdi   # 0x555555755018 <v64> (arg1)
    0x000055555555468d <+13>:  mov    $0x1,%r8d             ; set n to 1 in %r8d (arg5)
    0x0000555555554693 <+19>:  push   %r14                  ; save %r14
@@ -609,16 +615,16 @@ Dump of assembler code for function main:
    0x00005555555546d1 <+81>:  lea    0xf(%r12),%r14        ; copy addr above buf1 to %r14
    0x00005555555546d6 <+86>:  mov    %r12,%rbx             ; copy buf1 addr to %rbx
    0x00005555555546d9 <+89>:  callq  0x555555554890 <incr> ; call incr
-=> 0x00005555555546de <+94>:  lea    0x2af(%rip),%rsi      # 0x555555554994
+   0x00005555555546de <+94>:  lea    0x2af(%rip),%rsi      # 0x555555554994
    0x00005555555546e5 <+101>: mov    %rax,%rbp             ; copy buf2 addr to %rbp
    ...
    End of assembler dump.
 ```
-The main program also saves six registers on the stack
+The main program pushes the `%rip` and five [callee-saved registers](#section2) on the stack
 ```assembly
 (gdb) info frame
 Stack level 0, frame at 0x7fffffffdd00:
- rip = 0x5555555546de in main (dyn_ctypes.c:24); saved rip = 0x7ffff7a05b97
+ rip = 0x55555555470e in main (dyn_ctypes.c:28); saved rip = 0x7ffff7a05b97
  source language c.
  Arglist at 0x7fffffffdcc8, args: argc=<optimized out>, argv=<optimized out>
  Locals at 0x7fffffffdcc8, Previous frame's sp is 0x7fffffffdd00
@@ -626,35 +632,48 @@ Stack level 0, frame at 0x7fffffffdd00:
   rbx at 0x7fffffffdcd0, rbp at 0x7fffffffdcd8, r12 at 0x7fffffffdce0,
   r13 at 0x7fffffffdce8, r14 at 0x7fffffffdcf0, rip at 0x7fffffffdcf8
 ```
-As an additional source code change we have defined `v64` and `v32` as *global variables* and `v16` and `v8` as *global constants*. As we can see these variables and constants do not reside on the stack but are loaded just above the program memory.
+As an additional source code change we have defined `v64` and `v32` as *global initialized variables* and `v16` and `v8` as *global constants*. We also added an unused *global initialized* byte array `buf[16]` that is automatically initialized to all zeros when the C program starts up. As you can see all these global [or static] variables and constants do not reside on the stack but are loaded just above the program memory.
 ```assembly
 (gdb) print/x &v64
-$1 = 0x555555755018
+$3 = 0x555555755018
 (gdb) print/x &v32
-$2 = 0x555555755010
+$4 = 0x555555755010
 (gdb) print/x &v16
-$3 = 0x5555555549b0
+$5 = 0x5555555549b0
 (gdb) print/x &v8
-$4 = 0x5555555549ae
+$6 = 0x5555555549ae
+(gdb) print/x &buf
+$7 = 0x555555755040
+(gdb) x/16b buf
+0x555555755040 <buf>:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+0x555555755048 <buf+8>:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
 ```
-We can also verify that addresses of the dynamically allocated byte arrays `buf1` and `buf2` have been made available in the main program.
+We can also verify that addresses of the dynamically allocated byte arrays `buf1` and `buf2` have been made available in the main program.l
 ```assembly
 (gdb) print/x &buf1
 Address requested for identifier "buf1" which is in register $r12
 (gdb) print/x buf1
-$5 = 0x555555756260
+$8 = 0x555555756260
 (gdb) x/15b 0x555555756260
 0x555555756260:	0x00	0x11	0x22	0x33	0x44	0x55	0x66	0x78
 0x555555756268:	0x88	0x99	0xaa	0xbc	0xcc	0xde	0xef
 (gdb) print/x &buf2
 Address requested for identifier "buf2" which is in register $rbp
 (gdb) print/x buf2
-$6 = 0x555555756280
+$9 = 0x555555756280
 (gdb) x/15b 0x555555756280
 0x555555756280:	0x00	0x11	0x22	0x33	0x44	0x55	0x66	0x79
 0x555555756288:	0x88	0x99	0xaa	0xbd	0xcc	0xdf	0xf0
 ```
+And as the last component in our memory puzzle the command `info sharedlibrary`  shows the location of the *shared libraries* needed to run the `dyn_ctypes` program:
+```assembly
+(gdb) info sharedlibrary
+From                To                  Shared Object Library
+0x00007ffff7dd5f10  0x00007ffff7df4b20  /lib64/ld-linux-x86-64.so.2
+0x00007ffff7a052d0  0x00007ffff7b7dc3c  /lib/x86_64-linux-gnu/libc.so.6
+```
 Upon leaving the main program these two buffers are printed
+
 ```console
 (gdb) continue
 Continuing.
@@ -664,34 +683,40 @@ buf2 = 0x00112233445566798899aabdccdff0
 ```
 Based on all the collected address information we can now draw the following virtual memory map of an x86-64 process:
 
-| memory address   | content    | type            |
-|:----------------:|:-----------|:----------------|
-| `0x7fffffffdcf8` | saved %rip | stack main      |
-| `0x7fffffffdcf0` | saved %r14 | stack main      |
-| `0x7fffffffdce8` | saved %r13 | stack main      |
-| `0x7fffffffdce0` | saved %r12 | stack main      |
-| `0x7fffffffdcd8` | saved %rbp | stack main      |
+| memory address   | content    | type                 |
+|:----------------:|:-----------|:---------------------|
+| `0x7fffffffdcf8` | saved %rip | stack main           |
+| `0x7fffffffdcf0` | saved %r14 | stack main           |
+| `0x7fffffffdce8` | saved %r13 | stack main           |
+| `0x7fffffffdce0` | saved %r12 | stack main           |
+| `0x7fffffffdcd8` | saved %rbp | stack main           |
 | `0x7fffffffdcd0` | saved %rbx | &#8592; %rsp of main |
-| `0x7fffffffdcc8` | saved %rip | stack incr      |
-| `0x7fffffffdcc0` | saved %r15 | stack incr      |
-| `0x7fffffffdcb8` | saved %r14 | stack incr      |
-| `0x7fffffffdcb0` | saved %r13 | stack incr      |
-| `0x7fffffffdca8` | saved %r12 | stack incr      |
-| `0x7fffffffdca0` | saved %rbp | stack incr      |
+| `0x7fffffffdcc8` | saved %rip | stack incr           |
+| `0x7fffffffdcc0` | saved %r15 | stack incr           |
+| `0x7fffffffdcb8` | saved %r14 | stack incr           |
+| `0x7fffffffdcb0` | saved %r13 | stack incr           |
+| `0x7fffffffdca8` | saved %r12 | stack incr           |
+| `0x7fffffffdca0` | saved %rbp | stack incr           |
 | `0x7fffffffdc98` | saved %rbx | &#8592; %rsp of incr |
 |      &#8595;     |            | stack grows downwards|
-|                  |            |                 |
+|      &nbsp;      |            |                      |
+| `0x7ffff7df4b20` |            | shared libraries   |
+| `0x7ffff7dd5f10` | /lib64/ld-linux-x86-64.so.2| shared libraries |
+| `0x7ffff7b7dc3c` |            | shared libraries  |
+| `0x7ffff7a052d0` | /lib/x86_64-linux-gnu/libc.so.6| shared libraries |
+|      &nbsp;      |            |                      |
 |      &#8593;     |            | heap grows upwards   |
-| `0x555555756280` | buf2       | heap            |
-| `0x555555756260` | buf1       | heap            |
-| `0x555555755018` | v64        | global variables|
-| `0x555555755010` | v32        |                 |
-| `0x5555555549b0` | v16        | global constants|
-| `0x5555555549ae` | v8         |                 |
-| `0x555555554900` | incr last  | text incr       |
-| `0x555555554890` | incr start | text incr       |
-| `0x555555554777` | main last  | text main       |
-| `0x555555554680` | main start | text main       |
+| `0x555555756280` | buf2       | heap                 |
+| `0x555555756260` | buf1       | heap                 |
+| `0x555555755040` | buf        | global/static uninitialized variables |
+| `0x555555755018` | v64        | global/static initialized variables  |
+| `0x555555755010` | v32        | global/static initialized variables  |
+| `0x5555555549b0` | v16        | global/static constants              |
+| `0x5555555549ae` | v8         | global/static constants              |
+| `0x555555554900` |            | text incr            |
+| `0x555555554890` | incr       | text incr            |
+| `0x555555554777` |            | text main            |
+| `0x555555554680` | main       | text main            |
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 

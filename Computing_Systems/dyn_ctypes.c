@@ -3,6 +3,9 @@
 
 #include "dyn_incr.h"
 
+/* global uninitalized variables */
+uint32_t buf[16];
+
 /* global initialized variables */
 uint64_t v64 = 0x0011223344556677;
 uint32_t v32 = 0x8899aabb;
