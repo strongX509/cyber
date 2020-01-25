@@ -90,8 +90,24 @@ Capital letters A to Z and small letters a to z:
 
 The extended ASCII code uses 8 bits thus increasing the code table to `2^8 = 256` characters in order to cover characters in other languages, e.g. the ISO 8859 Latin-1 extension that covers latin characters in other western languages: à ä e e ê ô ö ù ü …
 
-**Python 1**: <a name="python1"></a>
+**Python 1**: <a name="python1"></a> We learn how to manipulate ASCII characters and strings
 
+The ordinal value of a single ASCII character can be determined with the `ord()` function:
+```python
+>>> print(ord('0'), ord('9'))
+48 57
+>>> print(ord('A'), ord('Z'))
+65 90
+>>> print(ord('a'), ord('z'))
+97 122
+```
+When the ordinal value is known, the corresponding ASCII character can be generated with the `chr()` function
+```python
+>>> print(chr(48), chr(57))
+0 9
+>>> print(chr(65), chr(90))
+A Z
+```
 We generate a  byte array from an ASCII string containing the numbers `0` to `9`
 ```python
 b_num = bytearray("0123456789", "ascii")
@@ -103,6 +119,8 @@ bytearray(b'0123456789') 10
 57
 >>> [format(c, '02x') for c in b_num]
 ['30', '31', '32', '33', '34', '35', '36', '37', '38', '39']  # hex
+>>> b_num.decode("ascii")    # convert back from bytearray to ASCII string
+'0123456789'
 ```
 
 We generate a  byte array from an ASCII string containing the uppercase characters `A` to `Z`
@@ -116,6 +134,8 @@ bytearray(b'ABCDEFGHIJKLMNOPQRSTUVWXYZ') 26
 65
 >>> [format(c, '02x') for c in b_chr]
 ['41', '42', '43', '44', '45', '46', '47', '48', '49', '4a', '4b', '4c', '4d', '4e', '4f', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '5a']
+>>> b_chr.decode("ascii")    # convert back from bytearray to ASCII string
+'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 ```
 We load an ASCII string into a byte array, convert the byte array into a hex string and convert the hex string back into an ASCII string.
 ```python
@@ -189,7 +209,14 @@ Since the restriction of the Unicode code-space to 21-bit values in 2003, UTF-8 
 
 **Python 2**: <a name="python2"></a>We analyze a some UTF-8 encoding examples.
 
-We start with a very simple example containing the ASCII character `a`, the German character `ä`, the French character `à` and a latin small character a with a ring below `ḁ`:
+The `ord()` and  `chr()` functions can also be used with UTF-8 characters:
+```python
+>>> ord('€')
+8364
+>>> chr(8364)
+'€'
+```
+Next  a very simple example containing the ASCII character `a`, the German character `ä`, the French character `à` and a latin small character a with a ring below `ḁ`:
 ```python
 >>> import binascii
 >>> chr_str = u'aäàḁ'
@@ -197,6 +224,8 @@ We start with a very simple example containing the ASCII character `a`, the Germ
 aäàḁ 4
 >>> [c for c in chr_str]
 ['a', 'ä', 'à', 'ḁ']
+>>> [ord(c) for c in chr_str]
+[97, 228, 224, 7681]
 >>> [binascii.hexlify(bytearray(c, 'utf-8')) for c in chr_str]
 [b'61', b'c3a4', b'c3a0', b'e1b881']
 >>> chr_arr = bytearray(chr_str, 'utf-8')
