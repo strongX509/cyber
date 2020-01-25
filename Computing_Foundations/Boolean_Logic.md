@@ -6,11 +6,12 @@
 3. [The OR Operator](#section3)
 4. [The XOR Operator](#section4)
 5. [Binary Full-Adder](#section5)
-5. [The NOT Operator](#section6)
-6. [The NAND Operator](#section7)
-7. [The NOR Operator](#section8)
-8. [De Morgan's Theorems](#section9)
-9. [Python Logical Operator Precedence](#section10)
+6. [The NOT Operator](#section6)
+7. [The NAND Operator](#section7)
+8. [The NOR Operator](#section8)
+9. [De Morgan's Theorems](#section9)
+10. [Python Logical Operator Precedence](#section10)
+11. [Logic Gate Symbols](#section11)
 
 Python exercises: &nbsp; [PY1](#python1) &nbsp; [PY2](#python2) &nbsp; [PY3](#python3) &nbsp; [PY4](#python4) &nbsp; [PY5](#python5) &nbsp; [PY6](#python6) &nbsp; [PY7](#python7) &nbsp; [PY8](#python8) &nbsp; [PY9](#python9)
 
@@ -316,7 +317,7 @@ Two theorems formulated by [Augustus de Morgan][MORG] (1806-1871) sometimes allo
 ```
 [MORG]: https://en.wikipedia.org/wiki/Augustus_De_Morgan
 
-## Python Logical Operator Precedence <a name="section9"></a>
+## Python Logical Operator Precedence <a name="section10"></a>
 
 The precedence (priority) of the Python logical operators is as follows:
 
@@ -332,6 +333,24 @@ The precedence (priority) of the Python logical operators is as follows:
 10. `or`  - Boolean OR
 
 If in doubt add additional parentheses!
+
+## Logic Gate Symbols <a name="section11"></a>
+
+| Logic Function |       Gate Symbol         |
+| :------------: | :-----------------------: |
+|      NOT       | !["NOT gate"][NOT_GATE]   |
+|      AND       | !["AND gate"][AND_GATE]   |
+|      OR        | !["OR gate"][OR_GATE]     |
+|      XOR       | !["XOR gate"][XOR_GATE]   |
+|      NAND      | !["NAND gate"][NAND_GATE] |
+|      NOR       | !["NOR gate"][NOR_GATE]   |
+
+[NOT_GATE]: https://upload.wikimedia.org/wikipedia/commons/1/1a/Buffer_ANSI_Labelled.svg "CC0"
+[AND_GATE]: https://upload.wikimedia.org/wikipedia/commons/b/b9/AND_ANSI_Labelled.svg "CC0"
+[OR_GATE]: https://upload.wikimedia.org/wikipedia/commons/1/16/OR_ANSI_Labelled.svg "CC0"
+[XOR_GATE]: https://upload.wikimedia.org/wikipedia/commons/1/17/XOR_ANSI_Labelled.svg "CC0"
+[NAND_GATE]: https://upload.wikimedia.org/wikipedia/commons/e/e6/NAND_ANSI_Labelled.svg  "CC0"
+[NOR_GATE]: https://upload.wikimedia.org/wikipedia/commons/c/c6/NOR_ANSI_Labelled.svg "CC0"
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
