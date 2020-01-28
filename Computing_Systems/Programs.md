@@ -177,7 +177,9 @@ We exit the debugger with `quit`.
 | print/x `$rax` | Value of register `%rax` in hex format          |
 | x/i `$rip`     | Value of instruction pointer and next instruction |
 | info frame     | Information on instruction pointer and stack     |
-| x/8xb `0x7fffffffa0b6` | Shows 8 bytes starting from `0x7fffffffa0b6` |
+| x/8xb `0x7fffffffa0b6` | Show 8 bytes in hex starting from `0x7fffffffa0b6` |
+| x/1xg `0x7fffffffdc88` | Show a giant word (8 bytes) in hex starting from `0x7fffffffdc88` |
+| x/1s `0x7fffffffde80` | Show a `nul`-terminated string starting from `0x7fffffffde80` |
 | quit           | Exit gdb                                         |
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]

@@ -243,7 +243,7 @@ caused a jump from `0x55555555473f` in `main` to `0x5555555547a3` in `incr`.
 The `info frame` information shows that the  `%rip` instruction pointer of `main` has been pushed to the stack at`0x7fffffffdc88` by the `callq` instruction so that the program flow can be resumed in `main` at the next instruction `0x555555554744` after the return from `incr`.
 
 ```assembly
-(gdb) x/1g 0x7fffffffdc88
+(gdb) x/1xg 0x7fffffffdc88
 0x7fffffffdc88:	0x0000555555554744
 ```
 The assembly code of the function `incr` looks as follows:
@@ -327,7 +327,7 @@ gdb) x/i $rip
 ```
 We see that the instruction pointer of `main` has been retrieved from the stack by the `retq` instruction and that the execution resumes at `0x555555554744`.
 ```assembly
-(gdb) x/15b 0x7fffffffdcc0
+(gdb) x/15xb 0x7fffffffdcc0
 0x7fffffffdcc0:	0x78	0x66	0x55	0x44	0x33	0x22	0x11	0x00
 0x7fffffffdcc8:	0xbc	0xaa	0x99	0x88	0xde	0xcc	0xef
 (gdb) continue
@@ -661,7 +661,7 @@ $8 = 0x555555756260
 Address requested for identifier "buf2" which is in register $rbp
 (gdb) print/x buf2
 $9 = 0x555555756280
-(gdb) x/15b 0x555555756280
+(gdb) x/15xb 0x555555756280
 0x555555756280:	0x00	0x11	0x22	0x33	0x44	0x55	0x66	0x79
 0x555555756288:	0x88	0x99	0xaa	0xbd	0xcc	0xdf	0xf0
 ```
