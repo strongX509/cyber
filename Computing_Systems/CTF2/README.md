@@ -6,18 +6,18 @@ What secret does the big bad wolf carry in its belly?
 
 Here is the listing of the C language program `wolf.c` that in turn calls the function `belly()` whose content is unknown.
 ```C
-#include "belly.h"
-
-#include <stdint.h>
-
-void main(int argc, char* argv[])
-{
-    uint64_t a = 0x1122334455667788;
-    uint8_t s = 2;
-    uint32_t d;
-
-    d = belly(a, s);
-}
+ 1 #include "belly.h"
+ 2
+ 3 #include <stdint.h>
+ 4
+ 5 void main(int argc, char* argv[])
+ 6 {
+ 7     uint64_t a = 0x1122334455667788;
+ 8     uint8_t s = 2;
+ 9     uint32_t d;
+10
+11     d = belly(a, s);
+12 }
 ```
 Any secrets you may find in the binary object [wolf][CTF2_OBJ] are encapsulated within curly brackets `{secret}`. 
 

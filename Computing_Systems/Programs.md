@@ -78,7 +78,7 @@ The `gdb` debugger is a very powerful command line tool for the dynamic analysis
 ```console
 > gdb sum
 ```
-we load the generated object code `sum` into the debugger and disassemble the machine instructions for the function `sum`
+We load the generated object code `sum` into the debugger and disassemble the machine instructions for the function `sum`
 ```assembly
 (gdb) disassemble sum
 Dump of assembler code for function sum:
@@ -94,7 +94,7 @@ Dump of assembler code for function sum:
    0x00000000004005dc <+38>: retq                       ; return to main program
 End of assembler dump.
 ```
-In the assembly code of the function `sum` we see that the 32-bit `%edi` register is used to transfer the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program. Also the current value of the stack pointer `%rsp` is used to reference memory locations on the stack. The details on the use of a processor's registers and stack will be explained in the [Processor Architecture](Processor_Architecture.md) lesson..
+In the assembly code of the function `sum` we see that the 32-bit `%edi` register is used to transfer the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program. Also the current value of the stack pointer `%rsp` is used to reference memory locations on the stack. The details on the use of a processor's registers and stack will be explained in the [Processor Architecture](Processor_Architecture.md) tutorial.
 
 We now set a *breakpoint* at line `11` of the C source code which is just before the sum is updated with the statement `s += n`. Then we start the execution with `run 3` setting the input argument to `n = 3`.
 ```assembly

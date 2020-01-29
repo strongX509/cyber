@@ -1,6 +1,6 @@
 # cyber
 
-A collection of cyber tutorials including Python examples:
+A collection of cyber tutorials including Python shell and C program examples:
 
 ## Computing Foundations
 * [Boolean Logic](Computing_Foundations/Boolean_Logic.md)

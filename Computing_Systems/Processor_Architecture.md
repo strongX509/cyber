@@ -22,11 +22,12 @@ The general architecture of a Central Processing Unit (CPU) is shown in the diag
 
 * The program is stored in the form of binary machine instructions in the *Program Memory* which is usually attached externally to the *Integrated Circuit* containing the *Centrol Processing Unit* (CPU).
 * The program flow is controlled by the *Instruction Counter* which in normal mode proceeds linearly, i.e. with increasing instruction addresses through the program memory.
-* Each binary instruction addressed in the program memory by the instruction counter is split by the *Decoder* into its components: The *Op Code* like `add` or `mov` itself and optional  *Source* and *Destination* storage locations which can be either *Registers* for fast access or addresses of data words that have to fetched from external *Data Memory*.first.
-* Data memory can be further split into the *Stack* which temporarily stores the *Local Variables* of functions and the *Heap* which allocates *Dynamic Memory* requested e.g. by the `malloc()` system command.
+* Each binary instruction addressed in the program memory by the instruction counter is split by the *Decoder* into its components: The *Op Code* like `add` or `mov` itself and optional  *Source* and *Destination* storage locations which can be either *Registers* for fast access or addresses of data words that have to be fetched from external *Data Memory*, first.
+* Data memory can be further split into the *Stack* which temporarily stores the *Local Variables* of functions and the *Heap* which allocates *Dynamic Memory* requested e.g. by the [malloc()][MAN_MALLOC] system command.
 * Instructions doing some computations on its input data make use of the [Arithmetic Logic Unit][ALU] (ALU) that performs *arithmetic* and *bitwise* operations on integer binary numbers in hardware. *Floating Point* operations are usually done by a special [Floating Point Unit][FPU] (FPU).
 * Instruction executing a `jump` operation either *unconditionally* or based on a preceding `cmp` or `test` *comparison* operation overwrite the instruction counter with the *destination jump address*. Also the `call` and `ret` instructions used to enter and leave *Functions* change the instruction counter.
 
+[MAN_MALLOC]: http://man7.org/linux/man-pages/man3/malloc.3.html
 [ALU]: https://en.wikipedia.org/wiki/Arithmetic_logic_unit
 [FPU]: https://en.wikipedia.org/wiki/Floating-point_unit
 
@@ -391,7 +392,7 @@ With the exception of the large `buf` byte array all variables are strictly kept
 | `0x7fffffffdce0` |   +0x00   | buf        | &#8592; %rsp of main |
 | `0x7fffffffdcd8` |   -0x00   | saved %rip | &#8592; %rsp of incr |
 
-Actually the reason that the `incr()`  function was moved to a separate file `incr.c` was the fact that the optimizing compiler just got rid of the function call and implemented the functionality directly in `main` as in-line code.
+Actually the reason that the `incr()`  function was moved to a separate file `incr.c` was the fact that the optimizing compiler would just have got rid of the function call and implemented the functionality directly in `main` as in-line code.
 
 ## The Heap <a name="section5"></a>
 We slightly modify the `ctypes` program in order to show the use of dynamically generated data objects that are stored on the *heap*.
@@ -493,6 +494,8 @@ We compile the program with optimization level `-O2` and execute `dyn_ctypes`
 buf1 = 0x00112233445566788899aabcccdeef
 buf2 = 0x00112233445566798899aabdccdff0
 ```
+As you can clearly see the integer variables packed into the buffer are now in *network order* with most significant byte stored first..
+
 **ASM 3**: <a name="asm3"></a>We analyze `dyn_ctypes`  by setting  a breakpoint at line `23` of `dyn_incr.c`, i.e. just before returning to the main program.
 
 ```assembly
