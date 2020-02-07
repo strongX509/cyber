@@ -10,15 +10,15 @@ char* copy(char *b)
     char *buf_heap = malloc(8);
 
     uint64_t canary = *(uint64_t*)(buf_stack +  8);
-    intptr_t rbp    = *(intptr_t*)(buf_stack + 16);
-    intptr_t rip    = *(intptr_t*)(buf_stack + 24);
+    uintptr_t rbp   = *(intptr_t*)(buf_stack + 16);
+    uintptr_t rip   = *(intptr_t*)(buf_stack + 24);
 
     strcpy(buf_stack, b);
     strcpy(buf_heap,  b);
 
-    printf("heap %p stack %p cny 0x%016" PRIx64 " rbp %p rip %p\n",
-            buf_heap, buf_stack, canary, (void*)rbp, (void*)rip);
-
+    printf("heap 0x%012" PRIx64 " stack %p cny 0x%016" PRIx64
+           " rbp 0x%012" PRIx64 " rip 0x%012" PRIx64 "\n",
+           (uintptr_t)buf_heap, buf_stack, canary, rbp, rip);
     return buf_heap;   
 }
 

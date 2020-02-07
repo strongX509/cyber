@@ -3,12 +3,14 @@
 ## Table of Contents
 1. [Randomizing Stack and Heap](#section1)
 2. [Changing ASLR Levels](#section2)
+3. [Position Independent Executable](#section3)
 
 C language programs: &nbsp;[C1](#c1)
 
 ## Randomizing Stack and Heap <a name="section1"></a>
 
 In order to thwart an unfriendly takeover of a running program by malware via a [Buffer Overflow][BUF_OVERFLOW] attack, all modern operating systems have the option to randomize the virtual memory locations of the *Stack* and *Heap* segments of a process.
+This technique is called *Address Space Layout Randomization (ASLR)*.
 
 **C 1**: <a name="c1"></a> The C program [aslr.c](aslr.c) consists of a main program `main()` that calls the function `copy()` which puts a copy of the command line argument string `argv[1]` both on the *Stack* and the *Heap* by using the very dangerous `strcpy()` libc system function which does not do any array size checking:
 
@@ -25,15 +27,15 @@ In order to thwart an unfriendly takeover of a running program by malware via a 
 10     char *buf_heap = malloc(8);
 11
 12     uint64_t canary = *(uint64_t*)(buf_stack +  8);
-13     intptr_t rbp    = *(intptr_t*)(buf_stack + 16);
-14     intptr_t rip    = *(intptr_t*)(buf_stack + 24);
+13     uintptr_t rbp   = *(intptr_t*)(buf_stack + 16);
+14     uintptr_t rip   = *(intptr_t*)(buf_stack + 24);
 15
 16     strcpy(buf_stack, b);
 17     strcpy(buf_heap,  b);
 18
-19     printf("heap %p stack %p cny 0x%016" PRIx64 " rbp %p rip %p\n",
-20             buf_heap, buf_stack, canary, (void*)rbp, (void*)rip);
-21
+19     printf("heap 0x%012" PRIx64 " stack %p cny 0x%016" PRIx64
+20            " rbp 0x%012" PRIx64 " rip 0x%012" PRIx64 "\n",
+21            (uintptr_t)buf_heap, buf_stack, canary, rbp, rip);
 22     return buf_heap;   
 23 }
 24
@@ -62,8 +64,8 @@ We set a breakpoint on line 19 right after the `strcpy` operation in function `c
 Breakpoint 1 at 0x831: file aslr.c, line 19.
 (gdb) run "1234567"
 Starting program: /home/andi/cyber/Computing_Systems/aslr "1234567"
-Breakpoint 1, copy (b=0x7fffffffe1d9 "1234567") at aslr.c:19
-19	    printf("heap %p stack %p cny 0x%016" PRIx64 " rbp %p rip %p\n",
+Breakpoint 1, copy (b=0x7fffffffe1c1 "1234567") at aslr.c:19
+19	    printf("heap 0x%012" PRIx64 " stack %p cny 0x%016" PRIx64
 ```
 Now let's have a look at the frame information within the `copy` function which tells us the position of the saved `rbp` and `rip` registers on the stack:
 ```assembly
@@ -185,6 +187,37 @@ then always the same static virtual memory map is used.  If  the program is run 
 heap 0x555555756260 stack 0x7fffffffe3d0 cny 0xcc2607f8089f0200 rbp 0x7fffffffe410 rip 0x5555555548ab
 heap 0x555555756260 stack 0x7fffffffe3d0 cny 0xb70550f68b9f7700 rbp 0x7fffffffe410 rip 0x5555555548ab
 ```
+
+## Position-Independent Executable <a name="section3"></a>
+
+A [Position-Independent Executable][PIE] (PIE) is a piece of machine code that can be executed anywhere in primary memory regardless of its *absolute address*. PIE-enabled code is thus the prerequisite for the address randomization of the *Text* virtual memory segment.  The `-pie` option of the `gcc` compiler produces position-independent code. On the *Ubuntu 18.04* Linux platform this tutorial was developed on, `-pie` is enabled by default. This is the reason that we noticed the randomization of the *Text* segment with ASLR level 2 in the previous section. Therefore we are now going to show how non-relocatable machine code looks like by explicitly disabling PIE with the `-no-pie` compiler option.
+```console
+> gcc -ggdb -no-pie -o aslr_no aslr.c
+```
+With the following `sysctl` command we chan check that we are still on ASLR level 0:
+```console
+> sysctl -a --pattern randomize
+kernel.randomize_va_space = 0
+```
+Next we call `aslr_no_pie` twice and see that ASLR has in fact been disabled and that the virtual memory location of the *Text* and *Heap* segments is very low at `0x00..` instead of `0x55..`
+```console
+> for i in {1..2} ; do ./aslr_no "1234567" ; done
+heap 0x000000602260 stack 0x7fffffffdd40 cny 0x173683a4ca082900 rbp 0x7fffffffdd80 rip 0x000000400766
+heap 0x000000602260 stack 0x7fffffffdd40 cny 0xc95601847b5d4900 rbp 0x7fffffffdd80 rip 0x000000400766
+```
+We enable full randomization by going to ASLR level 2 again using the `sysctl` command
+```console
+> sudo sysctl -w kernel.randomize_va_space=2
+kernel.randomize_va_space = 2
+```
+Now we see that the *Heap*  segment is randomized around its low `0x00..` virtual memory position whereas the non-PIE *Text* segment cannot be randomized
+```console
+> for i in {1..2} ; do ./aslr_no "1234567" ; done
+heap 0x000000cff260 stack 0x7ffdd06adfc0 cny 0x536c226f63458000 rbp 0x7ffdd06ae000 rip 0x000000400766
+heap 0x00000118d260 stack 0x7fff0d2e2f10 cny 0x8a4ff2878e89a500 rbp 0x7fff0d2e2f50 rip 0x000000400766
+```
+
+[PIE]: https://en.wikipedia.org/wiki/Position-independent_code
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
