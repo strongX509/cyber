@@ -56,7 +56,7 @@ This technique is called *Address Space Layout Randomization (ASLR)*.
 ```
 We compile the program with the use of frame pointers and first start the binary in the debugger
 ```console
-> gcc -ggdb -o aslr aslr.c
+> gcc -ggdb -fstack-protector-strong -o aslr aslr.c
 > gdb aslr
 ```
 We set a breakpoint on line 19 right before the `printf` statement in function `copy` and run the program with the command line argument `argv[1] = "1234567"`  which with the additional `nul` character terminating the string just fills the 8 byte deep stack and heap buffers.
@@ -195,7 +195,7 @@ heap 0x555555756260 stack 0x7fffffffdd60 cny 0x42adb0e8d2d23e00 rbp 0x7fffffffdd
 
 A [Position-Independent Executable][PIE] (PIE) is a piece of machine code that can be executed anywhere in primary memory regardless of its *absolute address*. PIE-enabled code is thus the prerequisite for the address randomization of the *Text* virtual memory segment.  The `-pie` option of the `gcc` compiler produces position-independent code. On the *Ubuntu 18.04* Linux platform this tutorial was developed on, `-pie` is enabled by default. This is the reason that we noticed the randomization of the *Text* segment with ASLR level 2 in the previous section. Therefore we are now going to show how non-relocatable machine code looks like by explicitly disabling PIE with the `-no-pie` compiler option.
 ```console
-> gcc -ggdb -no-pie -o aslr_no_pie aslr.c
+> gcc -ggdb -fstack-protector-strong -no-pie -o aslr_no_pie aslr.c
 ```
 With the following `sysctl` command we chan check that we are still on ASLR level 0:
 ```console
@@ -261,7 +261,7 @@ When the function `copy` is entered from the main program the global canary is c
 0x00005555555547d6 <+12>:  mov    %fs:0x28,%rax              ; copy canary to %rax
 0x00005555555547df <+21>:  mov    %rax,-0x8(%rbp)            ; copy canary below saved %rbp
 ```
-The `-fstack-protector` option of the `gcc` compiler automatically inserts the canary code above when character buffers are used in functions. Modern Linux distributions set this option by default. The  stack protection can be disabled with the `-fno-stack-protector` option.
+The `-fstack-protector-strong` option of the `gcc` compiler which is set by default e.g. by *Ubuntu 18.04*, automatically inserts the canary code above when character buffers are used in functions.  The  stack protection can be disabled with the `-fno-stack-protector` option.
 
 [CANARIES]: https://en.wikipedia.org/wiki/Buffer_overflow_protection#Canaries
 

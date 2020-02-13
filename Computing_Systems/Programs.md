@@ -73,12 +73,26 @@ n = 3, s = 6
 
 The `gdb` debugger is a very powerful command line tool for the dynamic analysis and debugging of object code.
 
-**ASM 1**: <a name="asm1"></a>With the command 
+**ASM 1**: <a name="asm1"></a> With the following command the generated object code `sum` is loaded into the debugger
 
 ```console
 > gdb sum
 ```
-We load the generated object code `sum` into the debugger and disassemble the machine instructions for the function `sum`
+With the `-n` option, commands from any `.gdbinit` initialization files can be prevented from executing, like e.g. the [Python Exploit Development Assistance (PEDA)][PEDA] script that we are not using in this tutorial.
+
+The `gdb`debugger has two styles with which to display assembly code: `intel` for Intel style that is popular mostly among *Windows* users and `att` for AT&T style that is popular with *Linux* users. The following command shows the default style which depends on the Linux distribution:
+
+```assembly
+(gdb) show disassembly-flavor
+The disassembly flavor is "intel".
+```
+In all our tutorials we are going to work with the `att` style. So if the default is set to `intel`, just switch the disassembly style with
+```assembly
+(gdb) set disassembly-flavor att
+(gdb) show disassembly-flavor
+The disassembly flavor is "att".
+```
+Now we are ready to disassemble the machine instructions for the function `sum`
 ```assembly
 (gdb) disassemble sum
 Dump of assembler code for function sum:
@@ -161,6 +175,8 @@ n = 3, s = 6
 [Inferior 1 (process 27469) exited normally]
 ```
 We exit the debugger with `quit`.
+
+[PEDA]: https://github.com/longld/peda
 
 ##  List of gdb Shell Commands <a name="section3"></a>
 

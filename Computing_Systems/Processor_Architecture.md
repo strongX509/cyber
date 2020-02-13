@@ -131,7 +131,7 @@ The standard unsigned integer types are defined by the included header file `std
 `gcc` compiles both `incr.c` and `ctypes.c` and links both object files into an executable program  `ctypes`
 
 ```console
-> gcc -ggdb -fomit-frame-pointer -o ctypes ctypes.c incr.c
+> gcc -ggdb -fomit-frame-pointer -fstack-protector-strong -o ctypes ctypes.c incr.c
 ```
 If we execute  `ctypes` on the command line we get the results in *host order* i.e. as *little-endian* unsigned integer values packed into a byte array `buf`:
 ```console
@@ -342,7 +342,7 @@ Before leaving the main program we dump the contents of the `buf` byte array con
 
 Now we are going to have a look at how object code is improved through applying compiler optimization using the `-O2` gcc option:
 ```console
-> gcc -ggdb -fomit-frame-pointer -O2 -o ctypes ctypes.c incr.c
+> gcc -ggdb -fomit-frame-pointer -fstack-protector-strong -O2 -o ctypes ctypes.c incr.c
 ```
 **ASM 2**: <a name="asm2"></a>Let's examine the optimized assembly code of `main` and `incr`
 ```assembly
@@ -489,7 +489,7 @@ In the main program [dyn_ctypes.c](dyn_ctypes.c) we call the function `incr()` t
 ```
 We compile the program with optimization level `-O2` and execute `dyn_ctypes`
 ```console
-> gcc -ggdb -fomit-frame-pointer -O2 -o dyn_ctypes dyn_ctypes.c dyn_incr.c
+> gcc -ggdb -fomit-frame-pointer -fstack-protector-strong -O2 -o dyn_ctypes dyn_ctypes.c dyn_incr.c
 > ./dyn_ctypes
 buf1 = 0x00112233445566788899aabcccdeef
 buf2 = 0x00112233445566798899aabdccdff0
