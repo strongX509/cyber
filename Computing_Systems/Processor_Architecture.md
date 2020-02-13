@@ -8,6 +8,7 @@
 3. [The Stack](#section3)
 4. [Code Optimization](#section4)
 5. [The Heap](#section5)
+6. [Virtual Memory Map](#section6)
 
 C language programs: &nbsp;[C1](#c1)  &nbsp;[C3](#c3)
 
@@ -684,6 +685,8 @@ buf1 = 0x00112233445566788899aabcccdeef
 buf2 = 0x00112233445566798899aabdccdff0
 [Inferior 1 (process 20469) exited normally]
 ```
+## Virtual Memory Map <a name="section6"></a>
+
 Based on all the collected address information we can now draw the following virtual memory map of an x86-64 process:
 
 | memory address   | content    | type                 |
