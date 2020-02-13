@@ -3,6 +3,7 @@
 A collection of cyber tutorials including Python shell and C program examples:
 
 ## Computing Foundations
+
 * [Boolean Logic](Computing_Foundations/Boolean_Logic.md)
 * [Number Systems](Computing_Foundations/Number_Systems.md)
 * [Integers](Computing_Foundations/Integers.md)
@@ -14,6 +15,11 @@ A collection of cyber tutorials including Python shell and C program examples:
 * [Programs](Computing_Systems/Programs.md)
 * [Processor Architecture](Computing_Systems/Processor_Architecture.md)
 * [Address Space Layout Randomization](Computing_Systems/ASLR.md)
+
+## Operating Systems
+
+* [Discretionary Access Control](Operating_Systems/Discretionary_Access_Control.md)
+* [Mandatory Access Control](Operating_Systems/Mandatory_Access_Control.md)
 
 About the author:
 
