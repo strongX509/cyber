@@ -180,19 +180,22 @@ We exit the debugger with `quit`.
 
 ##  List of gdb Shell Commands <a name="section3"></a>
 
-| Command        | Action                                          |
-|:---------------|:------------------------------------------------|
-| help [command] | Help information on a command                   |
-| break `11`     | Set a breakpoint on line `11`                   |
-| run [options]  | Start program execution with optional arguments |
-| continue       | Continue program execution                      |
-| step           | Execute next program line                       |
-| stepi          | Execute next machine instruction                |
-| print `n`      | Value of variable `n`                           |
-| print `&n`     | Memory address of variable `n`                  |
-| print/x `$rax` | Value of register `%rax` in hex format          |
+| Command        | Action                                            |
+|:---------------|:--------------------------------------------------|
+| help [command] | Help information on a command                     |
+| break `11`     | Set a breakpoint on line `11`                     |
+| run [options]  | Start program execution with optional arguments   |
+| continue       | Continue program execution                        |
+| step           | Execute next program line                         |
+| stepi          | Execute next machine instruction                  |
+| info frame     | Information on instruction pointer and stack      |
+| info inferiors | IDs of specified inferiors (all if no argument)   |
+| info args      | Argument variables of current stack frame         |
+| info locals    | Local variables of current stack frame            |
+| print `n`      | Value of variable `n`                             |
+| print/x `&n`   | Memory address of variable `n`                    |
+| print/x `$rax` | Value of register `%rax` in hex format            |
 | x/i `$rip`     | Value of instruction pointer and next instruction |
-| info frame     | Information on instruction pointer and stack     |
 | x/8xb `0x7fffffffa0b6` | Show 8 bytes in hex starting from `0x7fffffffa0b6` |
 | x/1xg `0x7fffffffdc88` | Show a giant word (8 bytes) in hex starting from `0x7fffffffdc88` |
 | x/1s `0x7fffffffde80` | Show a `nul`-terminated string starting from `0x7fffffffde80` |
