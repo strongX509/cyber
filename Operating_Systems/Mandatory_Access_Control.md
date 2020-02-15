@@ -11,7 +11,7 @@
 [Security Enhanced Linux][SELINUX]  (SELinux) is an implementation of *Mandatory Access Control* (MAC). This is done mainly through *Type Enforcement* (TE) but it contains also aspects of *Role Based Access Control* (RBAC). An additional feature is *Multi Layer Security* (MLS) with an extension towards *Multi Category Security* (MCS).
 
 The Fedora 31 VM image that we are going to work with comes with SELinux enabled
-and running. Import the `Fedora_31.ova` image file into  VirtualBox by double-clicking on it, start up and log in as user `hacker` with password `cyber-rs20`.
+and running. Import the `Fedora_31.ova` image file into VirtualBox by double-clicking on it, start up and log in as user `hacker` with password `cyber-rs20`.
 
 [SELINUX]: https://en.wikipedia.org/wiki/Security-Enhanced_Linux
 
@@ -32,7 +32,7 @@ Policy deny_unknown status:     allowed
 Memory protection checking:     actual (secure)
 Max kernel policy version:      31
 ```
-The `id` command shows the *security context* of subject `hacker` who is acting as user `unconfined_t` with role `unconfined_r`.
+The `id` command shows the *security context* of subject `hacker` who is acting as user `unconfined_u` with role `unconfined_r`.
 ```console
 $ id
 uid=1000(hacker) gid=1000(hacker) groups=1000(hacker),10(wheel)
@@ -184,14 +184,15 @@ and determine the security context the `httpd`daemon is running in
 # ps -efZ | grep httpd
 system_u:system_r:httpd_t:s0  root    4805     1  0 12:08 ? 00:00:00 /usr/sbin/httpd -DFOREGROUND
 system_u:system_r:httpd_t:s0  apache  4806  4805  0 12:08 ? 00:00:00 /usr/sbin/httpd -DFOREGROUND
+...
 ```
 With a text editor we create a `html`file `/var/www/html/index.html` with the content
 ```html
-  <html>
-    <title>This is a test web page</title>
+<html>
+  <title>This is a test web page</title>
   <body>
     <h1>This is a test web page</h1>
-    </body>
+  </body>
 </html>
 ```
 The security context of this newly created file is inherited from  the parent directory it was created in
