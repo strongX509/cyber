@@ -1,4 +1,4 @@
-# Discretionary Access Control
+# Passwords
 
 ## Table of Contents
 1. [Unix Password Format](#section1)
@@ -19,7 +19,7 @@ hacker:$6$UB3QP5iUCeAEu89V$BSzAdlYcCxPyGpJcu/ce5aprxwP1XtreRLB69KCeanv00YFxaOY6P
 ```
 which can be split into the following fields
 ```console
-<uid>$<algorithm>$<salt>$<hash>:<password creation and validity fields>...
+<uid>:$<algorithm>$<salt>$<hash>:<password creation and validity fields>...
 ```
 `uid`:  user identity
 
@@ -57,13 +57,12 @@ or a deprecated MD5 password hash
 ```python
 >>> crypt.crypt(passwd, '$1$'+salt+'$')
 '$1$UB3QP5iU$VFLwRy0Uk7nvh52dkaJ061'
->
 ```
 where only the first 8 characters (6 bytes) of the salt are used.
 
-## Passwort Change <a name="section1"></a>
+## Password Change <a name="section2"></a>
 
-We change the password of user `hacker` from `compass` to `cyber-rs20` and then back again to `compass` and note that due to the random `salt` value a different `hash` value results for the same password.
+We change the password of user `hacker` from `compass` to `cyber-rs20` and then back  to `compass` again and note that due to the random `salt` value a different `hash` value results for the same password.
 ```console
 # passwd hacker
 New password: cyber-rs20
