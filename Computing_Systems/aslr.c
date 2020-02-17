@@ -12,9 +12,9 @@ char* copy(char *b)
     strcpy(buf_stack, b);
     strcpy(buf_heap,  b);
 
-    uint64_t canary = *(uint64_t*)(buf_stack +  8);
-    uintptr_t rbp   = *(intptr_t*)(buf_stack + 16);
-    uintptr_t rip   = *(intptr_t*)(buf_stack + 24);
+    uint64_t canary = *(uint64_t*) (buf_stack +  8);
+    uintptr_t rbp   = *(uintptr_t*)(buf_stack + 16);
+    uintptr_t rip   = *(uintptr_t*)(buf_stack + 24);
 
     printf("heap 0x%012" PRIx64 " stack %p cny 0x%016" PRIx64
            " rbp 0x%012" PRIx64 " rip 0x%012" PRIx64 "\n",

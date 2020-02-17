@@ -30,9 +30,9 @@ This technique is called *Address Space Layout Randomization (ASLR)*.
 12     strcpy(buf_stack, b);
 13     strcpy(buf_heap,  b);
 14
-15     uint64_t canary = *(uint64_t*)(buf_stack +  8);
-16     uintptr_t rbp   = *(intptr_t*)(buf_stack + 16);
-17     uintptr_t rip   = *(intptr_t*)(buf_stack + 24);
+15     uint64_t canary = *(uint64_t*) (buf_stack +  8);
+16     uintptr_t rbp   = *(uintptr_t*)(buf_stack + 16);
+17     uintptr_t rip   = *(uintptr_t*)(buf_stack + 24);
 18
 19     printf("heap 0x%012" PRIx64 " stack %p cny 0x%016" PRIx64
 20            " rbp 0x%012" PRIx64 " rip 0x%012" PRIx64 "\n",
