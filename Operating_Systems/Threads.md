@@ -1,13 +1,13 @@
-# Threads
+# Multithreading
 
 ## Table of Contents
-1. [POSIX Threads](#section1)
-2. [POSIX Spinlock](#section2)
-3. [POSIX Mutex](#section3)
+1. [Threads](#section1)
+2. [Spinlocks](#section2)
+3. [Mutexes](#section3)
 
 C language programs: &nbsp; [C1](#c1) &nbsp; [C2](#c2) &nbsp; [C3](#c3)
 
-## POSIX Threads <a name="section1"></a>
+## Threads <a name="section1"></a>
 
 **C 1**: <a name="c1"></a>The program [multithreads.c](multithreads.c) creates three concurrent [POSIX threads][POSIX_THREADS] where each of them accesses a global variable `g`. increments its by one and sums `g` 10000 times with itself and prints out this sum. In order to ease the load on the processor cores a short  sleep period of 1 ms is added.
 
@@ -232,7 +232,7 @@ We notice that each thread has its own stack area.
 [POSIX_THREADS]: https://en.wikipedia.org/wiki/POSIX_Threads
 [THREADS_IMG]: Multithreads_500.png
 
-## POSIX Spinlock <a name="section2"></a>
+## Spinlocks <a name="section2"></a>
 
 If we execute the `multithreads` program several times, it sometimes happens that the final value of the `inc` variable in the last thread to rejoin the main program is not `30000` but `299999` or even `29998` as shown in the run below:
 ```console
@@ -252,7 +252,7 @@ The problem is that multiple threads try to access and increment the global vari
 ```
 In order to prevent this from happening we need a lock which makes the fetch and increment operation `inc = ++g` *atomic*.
 
-**C 2**: <a name="c2"></a>One solution is to use a POSIX Spinlock which is applied to the atomic fetch and update operation as implemented in [multithreads_spinlock.c](multithreads_spinlock.c):
+**C 2**: <a name="c2"></a>One solution is to use a *POSIX Spinlock* which is applied to the atomic fetch and update operation as implemented in [multithreads_spinlock.c](multithreads_spinlock.c):
 
 ```C
  1 #include <stdio.h>
@@ -325,7 +325,7 @@ In order to prevent this from happening we need a lock which makes the fetch and
 68     exit(0);
 69 }
 ```
-Spinlocks are ideal if the required locking is only for a very short time as is the case in updating a shared global variable.
+Because blocked threads are put into a busy-waiting-loop, *POSIX spinlocks* are ideal if the required locking is only for a very short time as is the case in updating a shared global variable.
 ```console
 > gcc -ggdb -o multithreads_spinlock multithreads_spinlock.c -lpthread
 > ./multithreads_spinlocks
@@ -348,11 +348,11 @@ Thread 2: inc = 29999, sum = 299990000
 Thread 2: inc = 30000, sum = 300000000
 ```
 
-## POSIX Mutex <a name="section3"></a>
+## Mutexes <a name="section3"></a>
 
-If a thread has to lock a longer sequence of instructions e.g. an  insertion or deletion of an entry into a linked list then *Mutexes* are more suitable than *Spinlocks*.
+If a thread has to lock a longer sequence of instructions e.g. an  insertion or deletion of an entry into a linked list then *POSIX Mutexes* are more suitable than *POSIX Spinlocks* because the waiting threads are put to sleep until the the mutex becomes unlocked.
 
-**C 3**: <a name="c3"></a>Use of a POSIX Mutex applied to the atomic fetch and update operation as implemented in [multithreads_mutex.c](multithreads_mutex.c):
+**C 3**: <a name="c3"></a>Use of a *POSIX Mutex* applied to the atomic fetch and update operation as implemented in [multithreads_mutex.c](multithreads_mutex.c):
 
 ```C
  1 #include <stdio.h>
@@ -404,7 +404,7 @@ If a thread has to lock a longer sequence of instructions e.g. an  insertion or 
 47     pthread_t tid[N];
 48     uint32_t i, id;
 49
-50     /* init spinlock */
+50     /* init mutex */
 51     pthread_mutex_init(&mutex, NULL);
 52
 53     /* create N threads */

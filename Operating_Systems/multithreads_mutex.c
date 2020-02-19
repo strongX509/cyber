@@ -26,6 +26,8 @@ void *my_thread(void *vargp)
         /* Increment global variable g with an atomic operation */
         pthread_mutex_lock(&mutex);
         inc = ++g;
+        /* sleep 0.1 milliseconds */
+        usleep(100);
         pthread_mutex_unlock(&mutex);
 
         while (rounds--)
@@ -33,8 +35,8 @@ void *my_thread(void *vargp)
             sum += inc;
         }
 
-        /* sleep 1 millisecond */
-        usleep(1000);
+        /* sleep 0.9 millisecond */
+        usleep(900);
 
         printf("Thread %u: inc = %5u, sum = %9u\n", my_id, inc, sum);
     }
@@ -45,7 +47,7 @@ int main()
     pthread_t tid[N];
     uint32_t i, id;
 
-    /* init spinlock */
+    /* init mutex */
     pthread_mutex_init(&mutex, NULL);
 
     /* create N threads */
