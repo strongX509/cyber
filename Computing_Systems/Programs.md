@@ -192,6 +192,7 @@ We exit the debugger with `quit`.
 | info inferiors | IDs of specified inferiors (all if no argument)   |
 | info args      | Argument variables of current stack frame         |
 | info locals    | Local variables of current stack frame            |
+| info threads   | Display currently known threads                   |
 | print `n`      | Value of variable `n`                             |
 | print/x `&n`   | Memory address of variable `n`                    |
 | print/x `$rax` | Value of register `%rax` in hex format            |
