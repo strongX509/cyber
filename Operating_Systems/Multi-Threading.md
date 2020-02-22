@@ -1,15 +1,16 @@
-# Multithreading
+# Multi-Threading
 
 ## Table of Contents
 1. [Threads](#section1)
 2. [Spinlocks](#section2)
 3. [Mutexes](#section3)
+4. [Deadlocks](#section4)
 
-C language programs: &nbsp; [C1](#c1) &nbsp; [C2](#c2) &nbsp; [C3](#c3)
+C language programs: &nbsp; [C1](#c1) &nbsp; [C2](#c2) &nbsp; [C3](#c3) &nbsp; [C4](#c4)
 
 ## Threads <a name="section1"></a>
 
-**C 1**: <a name="c1"></a>The program [multithreads.c](multithreads.c) creates three concurrent [POSIX threads][POSIX_THREADS] where each of them accesses a global variable `g`. increments its by one and sums `g` 10000 times with itself and prints out this sum. In order to ease the load on the processor cores a short  sleep period of 1 ms is added.
+**C 1**: <a name="c1"></a>The program [multithreads.c](multithreads.c) runs three concurrent instances of the `my_thread()` loop function by creating three [POSIX threads][POSIX_THREADS] where each instance accesses a global variable `g`, increments it by one, sums `g` 10000 times with itself and prints out this sum. In order to ease the load on the processor cores a short  sleep period of 1 ms is added to each loop.
 
 ```C
  1 #include <stdio.h>
@@ -325,7 +326,7 @@ In order to prevent this from happening we need a lock which makes the fetch and
 68     exit(0);
 69 }
 ```
-Because blocked threads are put into a busy-waiting-loop, *POSIX spinlocks* are ideal if the required locking is only for a very short time as is the case in updating a shared global variable.
+Because blocked threads are put into a busy-waiting-loop, *POSIX Spinlocks* are ideal if the required locking is only for a very short time as is the case in updating a shared global variable.
 ```console
 > gcc -ggdb -o multithreads_spinlock multithreads_spinlock.c -lpthread
 > ./multithreads_spinlocks
@@ -347,6 +348,7 @@ Thread 2: inc = 29998, sum = 299980000
 Thread 2: inc = 29999, sum = 299990000
 Thread 2: inc = 30000, sum = 300000000
 ```
+With the *POSIX Spinlock* in place exactly `30000` increments are done in each run.
 
 ## Mutexes <a name="section3"></a>
 
@@ -447,6 +449,126 @@ Thread 3: inc = 29997, sum = 299970000
 Thread 3: inc = 29998, sum = 299980000
 Thread 3: inc = 29999, sum = 299990000
 Thread 3: inc = 30000, sum = 300000000
+```
+Again exactly `30000`increments are executed.
+
+## Deadlocks <a name="section4"></a>
+
+**C 4**: <a name="c4"></a>Wrong use of multiple *POSIX Mutexes* can lead to *Deadlocks* as shown in [multithreads_deadlock.c](multithreads_deadlock.c):
+
+```C
+ 1 #include <stdio.h>
+ 2 #include <stdlib.h>
+ 3 #include <stdint.h>
+ 4 #include <unistd.h>
+ 5 #include <pthread.h>
+ 6
+ 7 /* number of threads */
+ 8 #define N	2
+ 9
+10 /* global variables incremented by threads */
+11 uint32_t g1 = 0, g2 = 0;
+12
+13 /* global mutexes protecting g1 and g2, respectively */
+14 pthread_mutex_t mutex1, mutex2;
+15
+16 /* function to be executed by all threads */
+17 void *my_thread(void *vargp)
+18 {
+19     uint32_t my_id = (uintptr_t)vargp;
+20     uint32_t iterations = 10000;
+21
+22     while (iterations--)
+23     {
+24         uint32_t rounds = 10000, g;
+25
+26         if (my_id == 1)
+27         {
+28             /* thread 1 only */
+29             pthread_mutex_lock(&mutex1);
+30             g = g1;
+31             /* sleep 0.1 milliseconds */
+32             usleep(100);
+33
+34             pthread_mutex_lock(&mutex2);
+35             g2 = ++g;
+36             pthread_mutex_unlock(&mutex2);
+37           
+38             pthread_mutex_unlock(&mutex1);
+39         }
+40         else
+41         {
+42             /* thread 2 only */
+43             pthread_mutex_lock(&mutex2);
+44             g = g2;
+45             /* sleep 0.1 milliseconds */
+46             usleep(100);
+47
+48             pthread_mutex_lock(&mutex1);
+49             g1 = ++g;
+50             pthread_mutex_unlock(&mutex1);
+51            
+52             pthread_mutex_unlock(&mutex2);
+53         }
+54
+55         /* sleep 0.9 milliseconds */
+56         usleep(900);
+57
+58         printf("Thread %u: g = %5u\n", my_id, g);
+59     }
+60 }
+61
+62 int main()
+63 {
+64     pthread_t tid[N];
+65     uint32_t i, id;
+66
+67     /* init mutexes */
+68     pthread_mutex_init(&mutex1, NULL);
+69     pthread_mutex_init(&mutex2, NULL);
+70
+71     /* create N threads */
+72     for (i = 0; i < N; i++)
+73     {
+74         id = i + 1;
+75         pthread_create(&tid[i], NULL, my_thread, (void*)(uintptr_t)id);
+76         printf("Started thread %d: %p\n", id, (void *)tid[i]);
+77     }
+78
+79     /* wait for threads to terminate */
+80     for (i = 0; i < N; i++)
+81     {
+82         pthread_join(tid[i], NULL);
+83     }
+84
+85     /* deinit mutexes */
+86     pthread_mutex_destroy(&mutex1);
+87     pthread_mutex_destroy(&mutex2);
+88
+89     exit(0);
+90 }
+```
+We compile and start the program:
+
+```console
+> gcc -ggdb -o multithreads_deadlock multithreads_deadlock.c -lpthread
+> ./multithreads_deadlock 
+Started thread 1: 0x7f401e45b700
+Started thread 2: 0x7f401dc5a700
+Thread 1: g =     1
+Thread 2: g =     2
+Thread 1: g =     3
+Thread 2: g =     4
+Thread 1: g =     5
+Thread 2: g =     6
+```
+In this run after three iterations a deadlock occurs. Trying multiple times we see that the actual time until the two threads lock varies:
+```console
+> ./multithreads_deadlock 
+Started thread 1: 0x7f72834d3700
+Started thread 2: 0x7f7282cd2700
+Thread 1: g =     1
+Thread 2: g =     2
 ```
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
