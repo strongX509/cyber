@@ -345,7 +345,7 @@ If in doubt add additional parentheses!
 |      NAND      | !["NAND gate"][NAND_GATE] |
 |      NOR       | !["NOR gate"][NOR_GATE]   |
 
-[NOT_GATE]: https://upload.wikimedia.org/wikipedia/commons/1/1a/Buffer_ANSI_Labelled.svg "CC0"
+[NOT_GATE]: https://upload.wikimedia.org/wikipedia/commons/6/60/NOT_ANSI_Labelled.svg "CC0"
 [AND_GATE]: https://upload.wikimedia.org/wikipedia/commons/b/b9/AND_ANSI_Labelled.svg "CC0"
 [OR_GATE]: https://upload.wikimedia.org/wikipedia/commons/1/16/OR_ANSI_Labelled.svg "CC0"
 [XOR_GATE]: https://upload.wikimedia.org/wikipedia/commons/1/17/XOR_ANSI_Labelled.svg "CC0"

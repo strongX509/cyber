@@ -371,7 +371,7 @@ Dump of assembler code for function main:
 (gdb) disassemble incr
 Dump of assembler code for function incr:
 => 0x0000555555554790 <+0>:  add    $0x1,%rdi              ; add 1 to v64
-   0x0000555555554794 <+4>:  add    $0x1,%esi4             ; add 1 to v32
+   0x0000555555554794 <+4>:  add    $0x1,%esi              ; add 1 to v32
    0x0000555555554797 <+7>:  add    $0x1,%edx              ; add 1 to v16
    0x000055555555479a <+10>: add    $0x1,%ecx              ; add 1 to v8
    0x000055555555479d <+13>: mov    %rdi,(%r8)             ; copy v64 to %buf[ 0]

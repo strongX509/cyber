@@ -147,7 +147,7 @@ bytearray(b'0123456789')
 >>> num_hex = binascii.hexlify(num_arr)
 >>> print(num_hex)
 b'30313233343536373839'
->>> binascii.unhexlify(hex_num)
+>>> binascii.unhexlify(num_hex)
 b'0123456789'
 ```
 
