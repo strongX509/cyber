@@ -24,6 +24,10 @@ A collection of cyber tutorials including Python shell and C program examples:
 * [Mandatory Access Control](Operating_Systems/Mandatory_Access_Control.md)
 * [Passwords](Operating_Systems/Passwords.md)
 
+## Virtual Private Networks
+
+* [IP Security (IPsec)](Virtual_Private_Networks/IPsec.md)
+
 About the author:
 
 *Dr. Andreas Steffen* is a full professor for Cyber Security and Communications with [HSR][HSR] University of Applied Sciences Rapperswil, Switzerland. He is head of the [INS][INS] Institute for Networked Solutions at HSR and project leader of the popular [strongSwan][SS] open source VPN solution.
