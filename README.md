@@ -27,6 +27,9 @@ A collection of cyber tutorials including Python shell and C program examples:
 ## Virtual Private Networks
 
 * [IP Security (IPsec)](Virtual_Private_Networks/IPsec.md)
+* [Certificate-based Authentication](Virtual_Private_Networks/IKEv2_Cert.md)
+* [PSK-based Authentication](Virtual_Private_Networks/IKEv2_PSK.md)
+* [EAP-based Authentication](Virtual_Private_Networks/IKEv2_EAP.md)
 
 About the author:
 

@@ -212,7 +212,7 @@ eap: IKEv2, no reauthentication, rekeying every 14400s, dpd delay 60s
   remote EAP_MD5 authentication:
     eap_id: %any
   eap: TUNNEL, rekeying every 3600s, dpd action is clear
-    local:  10.1.0.0/24
+    local:  10.1.0.0/24 192.168.0.2/32
     remote: dynamic
 ```
 
@@ -323,7 +323,7 @@ eap: IKEv2, no reauthentication, rekeying every 14400s, dpd delay 60s
     id: server.strongswan.org
   eap: TUNNEL, rekeying every 3600s, dpd action is hold
     local:  dynamic
-    remote: 10.1.0.0/16
+    remote: 10.1.0.0/16 192.168.0.2/32
 ```
 
 [STRONGSWAN]: https://www.strongswan.org
