@@ -83,6 +83,22 @@ Creating vpn-server ... done
 Creating vpn-client ... done
 Attaching to vpn-server, vpn-client
 ```
+strongSwan options can be configured in the `/etc/strongswan.conf` file which in our case just contains the startup scripts and a logging directive diverting the debug output to `stderr`.
+```console
+charon {
+   start-scripts {
+      creds = swanctl --load-creds
+      conns = swanctl --load-conns
+      pools = swanctl --load-pools
+   }
+   filelog {
+      stderr {
+         default = 1
+      }
+   }
+}
+```
+
 ### Network Topology
 
 The network topology that has been created looks as follows:
@@ -92,6 +108,18 @@ The network topology that has been created looks as follows:
  Virtual IP    +------------+ .3     Internet     .2 +------------+ .2    Intranet
 ```
 A VPN client with IP address 192.168.0.3 connects over the *Internet* to a VPN server with IP address 192.168.0.2 in order to access the *Intranet* 10.1.0.0/24. Within the IPsec tunnel the VPN client is using the *Virtual IP* address 10.3.0.1 assigned via IKEv2 by the VPN server.
+
+The following command shows the two network bridges that have been created
+```console
+$ ip route list | grep br
+10.1.0.0/16    dev br-6cc6a0c4ddf5 proto kernel scope link src 10.1.0.1
+192.168.0.0/24 dev br-db882ffcce1f proto kernel scope link src 192.168.0.1
+```
+Now we connect `wireshark` to the `br-db882ffcce1f`bridge which implements the `192.168.0.0/24` network. The capture filter will catch `ESP` (proto 50), `IKE` (port 500), `NAT-T` (port 4500) and `ICMP` packets:
+
+![Wireshark 1][WIRESHARK_1]
+
+[WIRESHARK_1]: Wireshark1_500.png
 
 ### VPN Server
 
