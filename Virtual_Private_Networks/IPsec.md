@@ -4,6 +4,7 @@
 1. [Encapsulating Security Payload (ESP)](#section1)
 2. [Internet Key Exchange Version 2 (IKEv2)](#section2)
 3. [strongSwan VPN Solution](#section3)
+4. [Public Key Infrastructure (PKI)](#section4)
 
 strongSwan exercise: &nbsp; [strongSwan1](#strongswan1) 
 
@@ -353,8 +354,56 @@ eap: IKEv2, no reauthentication, rekeying every 14400s, dpd delay 60s
     local:  dynamic
     remote: 10.1.0.0/16 192.168.0.2/32
 ```
+## Public Key Infrastructure <a name="section4"></a>
+
+The public key pairs and the corresponding X.509 certificates needed in the previous section were generated using the powerful strongSwan [pki][PKI] tool. The signature keys are based on 384 bit ellliptic curves which guarantee a security strength of 192 bits (at least as long as no practical quantum computer exists).
+
+### Root CA Certificate
+
+We generate the 384 bit ECDSA Root CA private key
+```console
+pki --gen --type ecdsa --size 384 --outform pem > caKey.pem
+```
+and a matching self-signed Root CA certificate
+```console
+pki --self --type ecdsa --in caKey.pem --ca --lifetime 3652 \
+    --dn "C=CH, O=Cyber, CN=Cyber Root CA"                  \
+    --outform pem > caCert.pem
+```
+### Server Certificate
+
+We generate the 384 bit ECDSA Server private key
+```console
+pki --gen --type ecdsa --size 384 --outform pem > serverKey.pem
+```
+and a matching Server certificate signed by the Root CA
+```console
+pki --issue --cacert caCert.pem --cakey caKey.pem   \
+    --type ecdsa --in serverKey.pem --lifetime 1461 \
+    --dn "C=CH, O=Cyber, CN=server.strongswan.org"  \
+    --san server.strongswan.org --flag serverAuth   \
+    --outform pem > serverCert.pem
+```
+Many commercial VPN clients (e.g. Windows 10) require the `serverAuthentication` *Extended Key Usage (EKU)* flag to be set in server certificates. 
+
+### Client Certificate
+
+We generate the 384 bit ECDSA Client private key
+```console
+pki --gen --type ecdsa --size 384 --outform pem > clientKey.pem
+```
+and a matching Server certificate signed by the Root CA
+```console
+pki --issue --cacert caCert.pem --cakey caKey.pem    \
+     --type ecdsa --in clientKey.pem --lifetime 1461 \
+     --dn "C=CH, O=Cyber, CN=client.strongswan.org"  \
+     --san client.strongswan.org --flag clientAuth   \
+     --outform pem > clientCert.pem
+```
+The use of the `clientAuthentication` *Extended Key Usage (EKU)* flag in client certificates is voluntary.
 
 [STRONGSWAN]: https://www.strongswan.org
+[PKI]: https://wiki.strongswan.org/projects/strongswan/wiki/IpsecPKI
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
 
