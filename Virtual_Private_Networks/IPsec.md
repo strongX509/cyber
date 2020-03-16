@@ -386,6 +386,29 @@ pki --issue --cacert caCert.pem --cakey caKey.pem   \
 ```
 Many commercial VPN clients (e.g. Windows 10) require the `serverAuthentication` *Extended Key Usage (EKU)* flag to be set in server certificates. 
 
+A private key can be printed with the command
+```console
+pki --print --type ecdsa --in serverKey.pem
+  privkey:   ECDSA 384 bits
+  keyid:     a4:4c:74:b5:bc:96:a3:19:78:88:ee:c6:7a:2d:7f:aa:f7:8a:90:27
+  subjkey:   88:b3:45:15:b5:53:3a:86:86:ad:3f:44:67:ef:c5:23:d1:72:2c:eb
+```
+and a X.509 certificate with
+```console
+pki --print --type x509 --in /etc/swanctl/x509/serverCert.pem
+  subject:  "C=CH, O=Cyber, CN=server.strongswan.org"
+  issuer:   "C=CH, O=Cyber, CN=Cyber Root CA"
+  validity:  not before Mar 09 12:03:38 2020, ok
+             not after  Mar 09 12:03:38 2024, ok (expires in 1454 days)
+  serial:    5a:91:0a:7e:c8:7e:42:a6
+  altNames:  server.strongswan.org
+  flags:     serverAuth
+  authkeyId: b8:d2:60:8a:87:cf:48:ee:71:5d:d8:51:20:23:5a:c1:aa:e5:f7:b2
+  subjkeyId: 88:b3:45:15:b5:53:3a:86:86:ad:3f:44:67:ef:c5:23:d1:72:2c:eb
+  pubkey:    ECDSA 384 bits
+  keyid:     a4:4c:74:b5:bc:96:a3:19:78:88:ee:c6:7a:2d:7f:aa:f7:8a:90:27
+  subjkey:   88:b3:45:15:b5:53:3a:86:86:ad:3f:44:67:ef:c5:23:d1:72:2c:eb
+```
 ### Client Certificate
 
 We generate the 384 bit ECDSA Client private key
