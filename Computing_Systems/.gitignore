@@ -3,3 +3,6 @@ ctypes
 dyn_ctypes
 aslr
 aslr_no_pie
+overflow
+exploit
+execve
