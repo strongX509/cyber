@@ -11,7 +11,7 @@
 [Security Enhanced Linux][SELINUX]  (SELinux) is an implementation of *Mandatory Access Control* (MAC). This is done mainly through *Type Enforcement* (TE) but it contains also aspects of *Role Based Access Control* (RBAC). An additional feature is *Multi Layer Security* (MLS) with an extension towards *Multi Category Security* (MCS).
 
 The Fedora 31 VM image that we are going to work with comes with SELinux enabled
-and running. Import the `Fedora_31.ova` image file into VirtualBox by double-clicking on it, start up and log in as user `hacker` with password `cyber-rs20`.
+and running. Import the `Fedora-31.ova` image file into VirtualBox by double-clicking on it, start up and log in as user `hacker` with password `compass`.
 
 [SELINUX]: https://en.wikipedia.org/wiki/Security-Enhanced_Linux
 
@@ -57,7 +57,7 @@ We notice that the whole Linux file system has been labeled.
 The user `hacker`becomes `root` by executing `sudo -s` . We see that the `uid` and `gid` have changed but the SELinux *security context* has remained the same.
 ```console
 $ sudo -s
-[sudo] password for hacker: cyber-rs20
+[sudo] password for hacker: compass
 # id
 uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 ```
