@@ -19,6 +19,7 @@ connections {
    include home.conf
    include psk.conf
    include eap.conf
+   include eap-tls.conf
 }
 
 secrets {
@@ -97,7 +98,7 @@ eap {
       id = server.strongswan.org
    }
    remote {
-      auth = eap-md5
+      auth = eap-dynamic
       eap_id = %any
    }
    children {
@@ -117,7 +118,7 @@ eap {
 
 **strongSwan 1**: <a name="strongswan1"></a> 
 
-The  VPN client initiates the  `net` CHILD_SA
+The  VPN client initiates the  `eap` CHILD_SA
 ```console
 client# swanctl --initiate --child eap > /dev/null
 10[CFG] vici initiate CHILD_SA 'eap'
@@ -163,7 +164,6 @@ The first `IKE_AUTH` response is received from the VPN server
 05[ENC] parsed IKE_AUTH response 1 [ IDr CERT AUTH EAP/REQ/ID ]
 ```
 The certificate and the digital signature of the VPN server is verified
-
 ```console
 05[IKE] received end entity cert "C=CH, O=Cyber, CN=server.strongswan.org"
 05[CFG]   using certificate "C=CH, O=Cyber, CN=server.strongswan.org"
@@ -171,56 +171,42 @@ The certificate and the digital signature of the VPN server is verified
 05[CFG]   reached self-signed root ca with a path length of 0
 05[IKE] authentication of 'server.strongswan.org' with ECDSA_WITH_SHA384_DER successful
 ```
-
 The VPN server requests the VPN client's `EAP IDENTITY` 
-
 ```console
 05[IKE] server requested EAP_IDENTITY (id 0x00), sending 'hacker'
 05[ENC] generating IKE_AUTH request 2 [ EAP/RES/ID ]
 05[NET] sending packet: from 192.168.0.3[4500] to 192.168.0.2[4500] (80 bytes)
 ```
-
 The VPN server sends an `EAP-MD5` challenge
-
 ```console
 14[NET] received packet: from 192.168.0.2[4500] to 192.168.0.3[4500] (96 bytes)
 14[ENC] parsed IKE_AUTH response 2 [ EAP/REQ/MD5 ]
 14[IKE] server requested EAP_MD5 authentication (id 0xB2)
 ```
-
 The VPN client returns the `EAP-MD5` response
-
 ```console
 14[ENC] generating IKE_AUTH request 3 [ EAP/RES/MD5 ]
 14[NET] sending packet: from 192.168.0.3[4500] to 192.168.0.2[4500] (96 bytes)
 ```
-
 The `EAP-MD5`  authentication was successful
-
 ```console
 13[NET] received packet: from 192.168.0.2[4500] to 192.168.0.3[4500] (80 bytes)
 13[ENC] parsed IKE_AUTH response 3 [ EAP/SUCC ]
 13[IKE] EAP method EAP_MD5 succeeded, no MSK established
 ```
-
 The VPN client returns an`AUTH` payload
-
 ```console
 13[IKE] authentication of '192.168.0.3' (myself) with EAP
 13[ENC] generating IKE_AUTH request 4 [ AUTH ]
 13[NET] sending packet: from 192.168.0.3[4500] to 192.168.0.2[4500] (112 bytes)
 ```
-
 The final `IKE_AUTH` response is received from the VPN server
-
 ```console
 05[NET] received packet: from 192.168.0.2[4500] to 192.168.0.3[4500] (256 bytes)
 05[ENC] parsed IKE_AUTH response 4 [ AUTH CPRP(ADDR) SA TSi TSr N(MOBIKE_SUP) N(ADD_4_ADDR) ]
 05[IKE] authentication of 'server.strongswan.org' with EAP successful
 ```
-
-The `IKE_SA` `psk`has been successfully established
-
+The `IKE_SA` `eap`has been successfully established
 ```console
 05[IKE] IKE_SA eap[1] established between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
 ```
@@ -233,12 +219,13 @@ The  VPN server has assigned a *Virtual IP* address to the VPN client
 ```console
 05[IKE] installing new virtual IP 10.3.0.1
 ```
-The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH`response define the crypto parameters and traffic selectors of the `CHILD_SA` to be established.
+The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH` response define the crypto parameters and traffic selectors of the `CHILD_SA` to be established.
 ```console
 05[CFG] selected proposal: ESP:AES_GCM_16_256/NO_EXT_SEQ
 05[IKE] CHILD_SA eap{1} established with SPIs c8f898c5_i cdb938a8_o and TS 10.3.0.1/32 === 10.1.0.0/24 192.168.0.2/32
 05[IKE] peer supports MOBIKE
 ```
+
 [RFC_4555]: https://tools.ietf.org/html/rfc4555
 [IKE_AUTH_EAP]: IKE_AUTH_EAP_665.png
 
@@ -254,17 +241,14 @@ PING 10.1.0.2 (10.1.0.2) 56(84) bytes of data.
 Lines 11-14 of the wireshark [ trace](#section5) show the encrypted ICMP messages as ESP packets with the SPIs of the `eap` `CHILD_SA`.
 
 When the VPN client pings the VPN server on its Internet address 192.168.0.2 the packet is encrypted as well because the traffic selector includes the external server IP address as well 
-
 ```console
 client# # ping -c 1 192.168.0.2
 PING 192.168.0.2 (192.168.0.2) 56(84) bytes of data.
 64 bytes from 192.168.0.2: icmp_seq=1 ttl=64 time=0.162 ms
 ```
-
 Lines 15-16 of the wireshark [ trace](#section5) show the encrypted ICMP messages as ESP packets with the SPIs of the `eap ` `CHILD_SA`.
 
 The number of ESP packets are also shown by the following `swanctl` command
-
 ```console
 client#  swanctl --list-sas
 eap: #1, ESTABLISHED, IKEv2, 9e4c18ae6de25007_i* 086a0efb7d745d8e_r
@@ -281,7 +265,7 @@ eap: #1, ESTABLISHED, IKEv2, 9e4c18ae6de25007_i* 086a0efb7d745d8e_r
 ```
 ## Terminating Connection <a name="section4"></a>
 
-The `IKE_SA` `home` and the dependent `CHILD_SAs`  `net` and `host` can be terminated with the following command
+The `IKE_SA` `eap` and the dependent `CHILD_SA` of the same name can be terminated with the following command
 ```console
 client# swanctl --terminate --ike eap > /dev/null
 06[CFG] vici terminate IKE_SA 'eap'

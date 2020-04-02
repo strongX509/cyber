@@ -8,6 +8,7 @@ We recommend to work through these tutorials step-by-step as a learning exercise
 * [Certificate-based Authentication](IKEv2_Cert.md)
 * [PSK-based Authentication](IKEv2_PSK.md)
 * [EAP-based Authentication](IKEv2_EAP.md)
+* [EAP-TLS-based Authentication](IKEv2_EAP_TLS.md)
 
 [STRONGSWAN_DOCKER]: https://github.com/strongX509/docker/tree/master/strongswan
 

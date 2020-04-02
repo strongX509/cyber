@@ -31,6 +31,7 @@ A collection of cyber tutorials including Python shell and C program examples:
 * [Certificate-based Authentication](Virtual_Private_Networks/IKEv2_Cert.md)
 * [PSK-based Authentication](Virtual_Private_Networks/IKEv2_PSK.md)
 * [EAP-based Authentication](Virtual_Private_Networks/IKEv2_EAP.md)
+* [EAP-TLS-based Authentication](Virtual_Private_Networks/IKEv2_EAP_TLS.md)
 
 About the author:
 

@@ -19,6 +19,7 @@ connections {
    include home.conf
    include psk.conf
    include eap.conf
+   include eap-tls.conf
 }
 
 secrets {
@@ -27,7 +28,6 @@ secrets {
       secret = 0sH7+o6wysMoaELv5OBihKVa3F
    }
 }
-
 ```
 The client-side connection definition for authentication based on *Pre-Shared Keys*  (PSK) is defined in `/etc/swanctl/psk.conf`
 ```console
@@ -61,7 +61,6 @@ psk {
 ### VPN Server Configuration
 
 The top-level configuration file is `/etc/swanctl/swanctl.conf` which also defines the pool used to allocate *Virtual IP* addresses and stores the *Pre-Shared Keys* of all remote access clients:
-
 ```console
 connections {
    include rw.conf   include psk.conf
@@ -114,8 +113,7 @@ psk {
 
 **strongSwan 1**: <a name="strongswan1"></a> 
 
-The  VPN client initiates the  `net` CHILD_SA
-
+The  VPN client initiates the  `psk` CHILD_SA
 ```console
 client# swanctl --initiate --child psk > /dev/null
 14[CFG] vici initiate CHILD_SA 'psk'
@@ -183,6 +181,7 @@ The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH`response define the
 06[IKE] CHILD_SA psk{1} established with SPIs cbc9560b_i c8fe9401_o and TS 10.3.0.1/32 === 10.1.0.0/24
 06[IKE] peer supports MOBIKE
 ```
+
 [RFC_4555]: https://tools.ietf.org/html/rfc4555
 [IKE_AUTH_PSK]: IKE_AUTH_PSK_665.png
 
@@ -214,7 +213,7 @@ psk: #1, ESTABLISHED, IKEv2, feb3507323a506cd_i* 05e7f2ba9a1bd9b7_r
 ```
 ## Terminating Connection <a name="section4"></a>
 
-The `IKE_SA` `home` and the dependent `CHILD_SAs`  `net` and `host` can be terminated with the following command
+The `IKE_SA` `psk` and the dependent `CHILD_SA` of the same name can be terminated with the following command
 ```console
 client# swanctl --terminate --ike psk > /dev/null
 11[CFG] vici terminate IKE_SA 'psk'

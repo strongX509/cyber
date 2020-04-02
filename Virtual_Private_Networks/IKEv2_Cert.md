@@ -21,6 +21,7 @@ connections {
    include home.conf
    include psk.conf
    include eap.conf
+   include eap-tls.conf
 }
 ```
 The client-side connection definition for certificate-based authentication is defined in `/etc/swanctl/home.conf`
@@ -59,7 +60,6 @@ home {
 ### VPN Server Configuration
 
 The top-level configuration file is `/etc/swanctl/swanctl.conf` which also defines the pool used to allocate *Virtual IP* addresses:
-
 ```console
 connections {
    include rw.conf
@@ -104,12 +104,12 @@ rw {
    dpd_delay = 60s
 }
 ```
+
 ## Initiating Connection <a name="section2"></a>
 
 **strongSwan 1**: <a name="strongswan1"></a> 
 
 The  VPN client initiates the  `net` CHILD_SA
-
 ```console
 client# swanctl --initiate --child net > /dev/null
 09[CFG] vici initiate CHILD_SA 'net'
@@ -182,14 +182,13 @@ The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH`response define the
 12[CFG] selected proposal: ESP:AES_GCM_16_256/NO_EXT_SEQ
 12[IKE] CHILD_SA net{1} established with SPIs cd491506_i c91df918_o and TS 10.3.0.1/32 === 10.1.0.0/24
 12[IKE] peer supports MOBIKE
-
 ```
 Additionally the `N(MOBIKE_SUP)` notification tells that the VPN server supports the *IKEv2 Mobility and Multihoming* protocol (MOBIKE) defined in [RFC 4555][RFC_4555].
 This is the reason that starting with the `IKE_AUTH` request the IKE port floats from UDP 500 to UDP 4500.
 
 [RFC_4555]: https://tools.ietf.org/html/rfc4555
 [IKE_AUTH]: IKE_AUTH_665.png
- 
+
 ## Tunneling Traffic <a name="section3"></a>
 
 The VPN client pings the VPN server on its Intranet address 10.1.0.2 twice. The source address of the IP packets leaving the client equals the *Virtual IP* 10.3.0.1.

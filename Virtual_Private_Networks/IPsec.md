@@ -73,18 +73,17 @@ Without the `N(REKEY_SA)` notification the `IKE_SA` is rekeyed, the fresh `KE` *
 
 Using the [strongSwan][STRONGSWAN] open source VPN solution we want to set up an IPsec tunnel based on IKEv2 authentication using X.509 certificates.
 
-**strongSwan 1**: <a name="strongswan1"></a>  First we install the `strongx509/strongswan` docker image, clone the `docker-compose` environment and bring the containers up:
+**strongSwan 1**: <a name="strongswan1"></a>  We clone the strongSwan `docker-compose` environment which automatically installs the `strongx509/strongswan` docker image and brings the `vpn-server` and `vpn-client` docker containers up:
 
 ```console
 $ git clone https://github.com/strongX509/docker.git
 $ cd docker/strongswan
-$ docker pull strongx509/strongswan
 $ docker-compose up
 Creating vpn-server ... done
 Creating vpn-client ... done
 Attaching to vpn-server, vpn-client
 ```
-strongSwan options can be configured in the `/etc/strongswan.conf` file which in our case just contains the startup scripts and a logging directive diverting the debug output to `stderr`.
+strongSwan options can be configured in the `/etc/strongswan.conf` file which in our case contains the startup scripts and a logging directive diverting the debug output to `stderr`.  Additionally either `EAP-MD5` or `EAP-TLS` can be dynamically negotiated and the proposed cipher suites for `EAP-TLS` are restricted.
 ```console
 charon {
    start-scripts {
@@ -97,6 +96,14 @@ charon {
          default = 1
       }
    }
+   eap-dynamic {
+      prefer_user = yes
+      preferred = md5, tls
+   }
+}
+
+libtls {
+  suites = TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 }
 ```
 
@@ -128,8 +135,8 @@ In a second console window we connect with the `vpn-server`docker container usin
 ```console
 server$ docker exec -ti vpn-server /bin/bash
 server# ./charon &
-00[DMN] Starting IKE charon daemon (strongSwan 5.8.2, Linux 5.4.0-kali3-amd64, x86_64)
-00[LIB] loaded plugins: charon random nonce x509 constraints pubkey pkcs1 pkcs8 pkcs12 pem openssl drbg kernel-netlink socket-default vici updown eap-identity eap-md5 eap-tls
+00[DMN] Starting IKE charon daemon (strongSwan 5.8.4, Linux 5.4.0-kali3-amd64, x86_64)
+00[LIB] loaded plugins: charon random nonce x509 constraints pubkey pkcs1 pkcs8 pkcs12 pem openssl drbg kernel-netlink socket-default vici updown eap-identity eap-md5 eap-dynamic eap-tls
 00[JOB] spawning 16 worker threads
 ```
 Next the root CA certificate, the server certificate and a matching ECDSA private key are loaded along with a couple of pre-shared secrets 
@@ -238,7 +245,7 @@ eap: IKEv2, no reauthentication, rekeying every 14400s, dpd delay 60s
   local public key authentication:
     id: server.strongswan.org
     certs: C=CH, O=Cyber, CN=server.strongswan.org
-  remote EAP_MD5 authentication:
+  remote EAP_DYNAMIC authentication:
     eap_id: %any
   eap: TUNNEL, rekeying every 3600s, dpd action is clear
     local:  10.1.0.0/24 192.168.0.2/32
@@ -251,8 +258,8 @@ In a third console window we connect with the `vpn-client`docker container using
 ```console
 client$ docker exec -ti vpn-client /bin/bash
 client# ./charon &
-00[DMN] Starting IKE charon daemon (strongSwan 5.8.2, Linux 5.4.0-kali3-amd64, x86_64)
-00[LIB] loaded plugins: charon random nonce x509 constraints pubkey pkcs1 pkcs8 pkcs12 pem openssl drbg kernel-netlink socket-default vici updown eap-identity eap-md5 eap-tls
+00[DMN] Starting IKE charon daemon (strongSwan 5.8.4, Linux 5.4.0-kali3-amd64, x86_64)
+00[LIB] loaded plugins: charon random nonce x509 constraints pubkey pkcs1 pkcs8 pkcs12 pem openssl drbg kernel-netlink socket-default vici updown eap-identity eap-md5 eap-dynamic eap-tls
 00[JOB] spawning 16 worker threads
 ```
 ```console
@@ -276,7 +283,8 @@ client# ./charon &
 00[DMN] conns: loaded connection 'home'
 00[DMN] conns: loaded connection 'psk'
 00[DMN] conns: loaded connection 'eap'
-00[DMN] conns: successfully loaded 3 connections, 0 unloaded
+00[DMN] conns: loaded connection 'eap-tls'
+00[DMN] conns: successfully loaded 4 connections, 0 unloaded
 ```
 The loaded client and root CA certificates can be viewed with the command
 ```console
@@ -354,6 +362,19 @@ eap: IKEv2, no reauthentication, rekeying every 14400s, dpd delay 60s
     local:  dynamic
     remote: 10.1.0.0/16 192.168.0.2/32
 ```
+```console
+eap-tls: IKEv2, no reauthentication, rekeying every 14400s, dpd delay 60s
+  local:  %any
+  remote: 192.168.0.2
+  local EAP_TLS authentication:
+    eap_id: client.strongswan.org
+  remote public key authentication:
+    id: server.strongswan.org
+  eap-tls: TUNNEL, rekeying every 3600s, dpd action is hold
+    local:  dynamic
+    remote: 10.1.0.0/16 192.168.0.2/32
+```
+
 ## Public Key Infrastructure <a name="section4"></a>
 
 The public key pairs and the corresponding X.509 certificates needed in the previous section were generated using the powerful strongSwan [pki][PKI] tool. The signature keys are based on 384 bit ellliptic curves which guarantee a security strength of 192 bits (at least as long as no practical quantum computer exists).
