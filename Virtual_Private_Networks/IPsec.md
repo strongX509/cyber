@@ -78,6 +78,7 @@ Using the [strongSwan][STRONGSWAN] open source VPN solution we want to set up an
 ```console
 $ git clone https://github.com/strongX509/docker.git
 $ cd docker/strongswan
+$ sh scripts/gen_dirs.sh
 $ docker-compose up
 Creating vpn-server ... done
 Creating vpn-client ... done
