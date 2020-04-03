@@ -133,7 +133,7 @@ The `SA` payload contains the selected IKE_SA` proposal
 ```console
 10[CFG] selected proposal: IKE:AES_CBC_256/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/CURVE_25519
 ```
-The VPN server doesn't know yet that the authentication will be ``PSK` -based , therefore a `CERTREQ` payload is sent.
+The VPN server doesn't know yet that the authentication will be `PSK`-based , therefore a `CERTREQ` payload is sent.
 ```console
 10[IKE] received cert request for "C=CH, O=Cyber, CN=Cyber Root CA"
 ```

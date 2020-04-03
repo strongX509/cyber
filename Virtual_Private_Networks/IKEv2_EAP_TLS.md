@@ -22,7 +22,7 @@ connections {
    include eap-tls.conf
 }
 ```
-The client-side connection definition for authentication based on the  *Extended Authentication Protocol*  (EAP) is defined in `/etc/swanctl/eap-tls.conf`
+The client-side connection definition for authentication based on *EAP-TLS* is defined in `/etc/swanctl/eap-tls.conf`
 ```console
 eap-tls {
    remote_addrs = 192.168.0.2
@@ -53,7 +53,7 @@ The remote traffic selector `TSr` is now a concatenation of the Intranet `10.1.0
 
 ### VPN Server Configuration
 
-The top-level configuration file is `/etc/swanctl/swanctl.conf` which also defines the pool used to allocate *Virtual IP* addresses and stores the *EAP* credentials of all remote access clients:
+The top-level configuration file is `/etc/swanctl/swanctl.conf` which also defines the pool used to allocate *Virtual IP* addresses:
 
 ```console
 connections {

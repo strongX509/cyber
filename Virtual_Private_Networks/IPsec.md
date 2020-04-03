@@ -281,6 +281,7 @@ client# ./charon &
 14[CFG] added vici connection: home
 07[CFG] added vici connection: psk
 16[CFG] added vici connection: eap
+11[CFG] added vici connection: eap-tls
 00[DMN] conns: loaded connection 'home'
 00[DMN] conns: loaded connection 'psk'
 00[DMN] conns: loaded connection 'eap'
