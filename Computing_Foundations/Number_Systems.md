@@ -15,6 +15,7 @@ The [natural numbers][NAT_NUM] consist of all positive integers 1, 2, 3, ... Oft
 Natural numbers are usually represented in the [decimal numeral system][DEC_NUM] or base-10 [positional numeral system][POS_NUM]:
 ```
 703 = 7*10^2 + 0*10^1 + 3*10^0
+    = 7*100  + 0*10   + 3*1
 ```
 But besides the human possessing 10 fingers on his two hands there is no special advantage in using 10 as a base for a [positional numeral system][POS_NUM]. The generic positional notation for a number with an arbitrary base or radix is shown below.
 
@@ -25,14 +26,17 @@ Number = ... + Digit*Radix^Index + ... + Digit_1*Radix^1 + Digit_0*Radix^0
 Actually for a computer built from electronic NAND and NOR gates implementing Boolean logic, the base-2 [binary numeral system][BIN_NUM] is a much more convenient number representation:
 ```
 1010111111 = 1*2^9 + 0*2^8 + 1*2^7 + 0*2^6 + 1*2^5 + 1*2^4 + 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
+             1*512 + 0*256 + 1*128 + 0*64  + 1*32  + 1*16  + 1*8   + 1*4   + 1*2   + 1*1
 ```
 For humans the many digits of a binary number representation are quite tiresome. Therefore the more compact base-8 [octal numeral system][OCT_NUM]
 ```
 1277 = 1*8^3 + 2*8^2 + 7*8^1 + 7*8^0
+     = 1*512 + 2*64  + 7*8   + 7*1
 ```
 or the very popular base-16 [hexadecimal numeral system][HEX_NUM]
 ```
 2BF = 2*16^2 + B*16^1 + F*16^0
+    = 2*256  + 11*16  + 15*1
 ```
 are extensively used in computer and software engineering.
 
