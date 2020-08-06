@@ -44,6 +44,8 @@ has a numerical value of
 
 **Python 1**: <a name="python1"></a>We explore the properties of the C language 32-bit `float` format.
 
+**Positive Powers of Two**
+
 Let's have a look at the representation of some positive powers of two:
 ```python
 >>> from ctypes import *
@@ -52,7 +54,7 @@ Let's have a look at the representation of some positive powers of two:
 >>> print(x)
 c_float(1.0)
 >>> x_addr = addressof(x)
->>> x32_p = cast(x_addr, uint32_p  # cast float to uint32_t
+>>> x32_p = cast(x_addr, uint32_p) # cast float to uint32_t
 >>> format(x32_p[0], '032b')
 '0 01111111 00000000000000000000000'
 >>> x.value = 2.0                  # 2^1
@@ -73,7 +75,9 @@ c_float(1.0)
 >>> print(x)
 c_float(inf)                       # positive infinity
 ```
-In the examples above only the `exponent` field is set and allows powers up to `2^127`. The `fraction` field remains unused. The  all ones exponent `11111111` equivalent `2^128` is used to express  *positive infinity* (`inf`).
+In the examples above only the `exponent` field is set. The `fraction` field remains unused and the `sign` bit is not set resulting in positive numbers. The largest allowed power of two is `2^127` represented by an exponent field of `11111110` whereas the all ones exponent `11111111` is used to express *positive infinity* (`inf`).
+
+**Negative Numbers**
 
 In the next examples we create some negative numbers which set the `sign`bit to `1`:
 ```python
@@ -95,9 +99,11 @@ In the next examples we create some negative numbers which set the `sign`bit to 
 >>> print(x)
 c_float(-inf)                      # negative infinity
 ```
-The value `-2^128`is equivalent to *negative infinity* (`-inf`).
+An all ones exponent `11111111` together with the sign bit set to `1` is used to express *negative infinity* (`-inf`).
 
-Now we create some negative powers of two which represent values smaller than one:
+**Negative Powers of Two**
+
+Now we create some negative powers of two which represent positive values smaller than one:
 ```python
 >>> x.value = 0.5                  # 2^-1
 >>> format(x32_p[0], '032b')
@@ -111,19 +117,27 @@ Now we create some negative powers of two which represent values smaller than on
 >>> x.value = 1.0/(1 << 126)       # 2^-126
 >>> format(x32_p[0], '032b')
 '0 00000001 00000000000000000000000'
+```
+Up to a power of `2^-126` the `exponent` field is larger than zero and the mantissa has a *normal* format with an implicit first bit and a full resolution of 23 `fraction` bits.
+```python
 >>> x.value = 1.0/(1 << 127)       # 2^-127
 >>> format(x32_p[0], '032b')
 '0 00000000 10000000000000000000000'
 >>> x.value = 1/(1 << 149)         # 2^-149
 >>> format(x32_p[0], '032b')
+'0 00000000 00000000000000000000001'
 >>> print(x)
 c_float(1.401298464324817e-45)
-'0 00000000 00000000000000000000001'
+```
+Starting with a power of `2^-127` and up to the minimum representable power of  `2^-149` equivalent to about`10^-45` the numbers are *subnormal* without the implicit first bit and the resolution of the mantissa is reduced.
+```python
 >>> x.value = 0                    # zero
 >>> format(x32_p[0], '032b')
 '0 00000000 00000000000000000000000'
 ```
-Up to a power of `2^-126` the `exponent` field is larger than zero and the mantissa has a *normal* format with an implicit first bit and a full resolution of 23 `fraction` bits. Starting with a power of `2^-127` and up to the minimum representable power of  `2^-149` equivalent to about`10^-45` the numbers are *subnormal* without the implicit first bit and the resolution of the mantissa is reduced. An all zero exponent and an all zero mantissa represents *zero*.
+An all zero exponent and an all zero mantissa represents *zero*.
+
+**Binary Fractions**
 
 The following numbers are composed as a sum of various fractions of two and thus use the `fraction` field:
 ```python
@@ -178,6 +192,9 @@ By setting the least significant bit of the `fraction` field we see that the max
 >>> print(x)
 c_float(1.0000001192092896)
 ```
+
+**Decimal Fractions**
+
 Decimal fractions cannot be represented exactly because `10 = 2*5` is not a power of `2`
 ```python
 >>> x.value = 1.1
@@ -194,6 +211,9 @@ Therefore the evaluation of the discriminant &#916; = `b^2 - 4ac` of a quadratic
 >>> print(b.value*b.value - 4*a.value*c.value)
 5.21540644005114e-10
 ```
+
+**Error Handling**
+
 If some internal computing error occurs (e.g. the division 0/0) then the value is set to `NaN` (not a number)
 ```python
 >>> x32_p[0] = 0b01111111110000000000000000000000
@@ -220,10 +240,12 @@ sign|exponent 11 bits     |fraction 52 bits                                   |
 Again by completing the *mantissa* with an additional implicit bit in front of the 53 `fraction` bits, the value of the floating point number can be computed from the IEEE 754 representation as follows
 
 ```python
-number = (1-2*sign) * (1 + fraction*2^-52) * 2^(exponent-1023)
+number = (1-2*sign) * [1 + fraction*2^-52] * 2^(exponent-1023)
 ```
 
 **Python 2**: <a name="python2"></a>We explore the properties of the C language 64-bit `double` format.
+
+**Positive Powers of Two**
 
 ```python
 >>> from ctypes import *
@@ -250,6 +272,9 @@ c_double(1.0)
 >>> print(x)
 c_double(inf)
 ```
+
+**Negative Powers of Two**
+
 Now we create some negative powers of two which represent values smaller than one:
 ```python
 >>> x.value = 0.5                  # 2^-1
@@ -264,6 +289,9 @@ Now we create some negative powers of two which represent values smaller than on
 >>> x.value = 1/(1 << 1022)        # 2^-1022
 >>> format(x64_p[0], '064b')
 '0 00000000001 0000000000000000000000000000000000000000000000000000'
+```
+Up to a power of `2^-1022` the `exponent` field is larger than zero and the mantissa has a *normal* format with an implicit first bit and a full resolution of 52 `fraction` bits.
+```python
 >>> x.value = 1/(1 << 1023)        # 2^-1023
 >>> format(x64_p[0], '064b')
 '0 00000000000 1000000000000000000000000000000000000000000000000000'
@@ -272,11 +300,16 @@ Now we create some negative powers of two which represent values smaller than on
 '0 00000000000 0000000000000000000000000000000000000000000000000001'
 >>> print(x)
 c_double(5e-324)
+```
+Starting with a power of `2^-1023` and up to the minimum representable power of `2^-1047` equivalent to about`10^-324` the numbers are *subnormal* without the implicit first bit and the resolution of the mantissa is reduced.
+```python
 >>> x.value = 0                    # zero
 >>> format(x64_p[0], '064b')
 '0 00000000000 0000000000000000000000000000000000000000000000000000'
 ```
-Up to a power of `2^-1022` the `exponent` field is larger than zero and the mantissa has a *normal* format with an implicit first bit and a full resolution of 52 `fraction` bits. Starting with a power of `2^-1023` and up to the minimum representable power of  `2^-1047` equivalent to about`10^-324` the numbers are *subnormal* without the implicit first bit and the resolution of the mantissa is reduced. An all zero exponent and an all zero mantissa represents *zero*.
+An all zero exponent and an all zero mantissa represents *zero*.
+
+**Binary Fractions**
 
 The biggest number representable by a `double` is  `2^1024 - 2^971` and is  about `10^308`:
 
@@ -296,6 +329,9 @@ By setting the least significant bit of the `fraction` field we see that the max
 >>> print(x)
 c_double(1.0000000000000002)
 ```
+
+**Decimal Fractions**
+
 Decimal fractions cannot be represented exactly because `10 = 2*5` is not a power of `2`
 ```python
 >>> x.value = 1.1
