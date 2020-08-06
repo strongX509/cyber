@@ -174,12 +174,12 @@ We access the individual bytes of a `uint16_t` word and see that the storage ord
 >>> hex(x_addr)
 '0x7f513d85ac48'                    # 48 bit memory address of x
 >>> x16_p = cast(x_addr, uint16_p)  # cast address to uint16_t pointer
->>> hex(x16_p[0])                   # get first uint16_t array element
+>>> hex(x16_p[0])                   # get first and only uint16_t array element
 '0xaabb'
 >>> x8_p = cast(x_addr, uint8_p)    # cast address to uint8_t pointer
->>> hex(x8_p[0])                    # get first uint16_t array element
+>>> hex(x8_p[0])                    # get first uint8_t array element
 '0xbb'                              # LSB is output
->>> hex(x8_p[1])                    # get second uint16_t array element
+>>> hex(x8_p[1])                    # get second uint8_t array element
 '0xaa'                              # MSB is output
 >>> tmp = x8_p[0]                   # put LSB into temporary storage
 >>> x8_p[0] = x8_p[1]               # MSB and LSB exchange positions
