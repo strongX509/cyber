@@ -20,9 +20,13 @@ sign|exponent 8 bits|fraction 23 bits                             |
 
 The value of the floating point number can be computed from the IEEE 754 representation as follows
 ```python
-number = (1-2*sign) * (1 + fraction*2^-23) * 2^(exponent-127)
+number = (1-2*sign) * [1 + fraction*2^-23] * 2^(exponent-127)
 ```
-As you can see the *mantissa* has an additional implicit bit in front of the 23 explicit `fraction` bits. Applied to the following IEEE 754 representation example
+As you can see the *mantissa* has an additional implicit bit in front of the 23 explicit `fraction` bits.
+
+**Numerical Example**
+
+The following IEEE 754 single precision representation example
 ```  <!-- language: lang-none -->
 sign|exponent 8 bits|fraction 23 bits                             |
   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -30,11 +34,13 @@ sign|exponent 8 bits|fraction 23 bits                             |
   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
   |0              |8              |16             |24           31|
 ```
-the value
+has a numerical value of
 ```python
- 1 * (1 + 2^21*2^-23) * 2^(0b01111100 - 127) = 1 * (1 + 2^-2) * 2^-3 = 0.15625
+ 1 * [1 + (2^21)*(2^-23)] * 2^(0b01111100 - 127) =
+ 1 * [1 + 2^(21-23)]      * 2^(124-127) =
+ 1 * [1 + 2^-2]           * 2^-3        = 
+ 1 * [1 + 0.25]           * 0.125       = 0.15625
 ```
-results.
 
 **Python 1**: <a name="python1"></a>We explore the properties of the C language 32-bit `float` format.
 
