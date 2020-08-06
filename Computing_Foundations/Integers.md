@@ -128,7 +128,7 @@ c_ulong(0)
 
 ## Endianness <a name="section3"></a>
 
-A 32 bit word (`uint16_t` or `int16_t`) comprises  four ordered bytes of memory:
+A 32 bit word used to store an unsigned or signed integer (`uint32_t` or `int32_t`, respectively) comprises  four ordered bytes of memory:
 ``` <!-- language: lang-none -->
 word32 = byte3 * 2^24  +  byte2 * 2^16  +  byte1 * 2^8  +  byte0
 ```
