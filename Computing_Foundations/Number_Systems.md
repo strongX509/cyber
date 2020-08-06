@@ -206,9 +206,9 @@ Since a hex number contains the characters `A` to `F` we have to analyze the nib
 >>> print(nibbles[0], nibbles[1], nibbles[2], nibbles[3])
 0 2 B F
 ```
-or we can convert each nibble into an integer
+or we can convert each nibble in the string above into an integer
 ```python
->>> [int(x,16) for x in format(703, '04x')]
+>>> [int(x,16) for x in nibbles]
 [0, 2, 11, 15]
 ```
 Using the *byte mask* `0x00ff` we can determine the decimal value of each byte
