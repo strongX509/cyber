@@ -171,7 +171,7 @@ print(b_arr)
 ```
 The output of the script is
 ```python
-./ascii.py
+python3 ascii.py
 bytearray(b'Oh my god! There are 20 students in the classroom, (\x07)')
 bytearray(b'OH MY GOD! THERE ARE 20 STUDENTS IN THE CLASSROOM, (\x07)')
 bytearray(b'oh my god! there are 20 students in the classroom, (\x07)')
