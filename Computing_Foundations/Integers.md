@@ -196,9 +196,6 @@ We access the individual bytes of a `uint32_t` word and again *Little-Endianness
 >>> x_addr = addressof(x)           # get memory address of x
 >>> hex(x_addr)
 '0x7f0a21408c48'                    # 48 bit memory address of x
->>> x_addr = addressof(x)           # take storage address of x
->>> hex(x_addr)                     # storage address of x
-'0x7f0a21408c48'
 >>> x8_p = cast(x_addr, uint8_p)    # cast address to uint8_t pointer
 >>> hex(x8_p[0])                    # get first uint8_t array element
 '0xdd'                              # LSB is output
