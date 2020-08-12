@@ -85,6 +85,7 @@ Not the *granted permissions* are defined but rather the *forbidden capabilites*
 So if we don't want to give *read* permission to *others* and want to add *write* permission to *group* then we can do this manually change for existing files
 ```console
 $ chmod o-r testfile*
+$ chmod g+w testfile*
 $ ls -l testfile*
 -rw-rw---- 1 hacker hacker  0 Feb 13 10:11 testfile1
 -rwxrwx--x 1 hacker hacker 17 Feb 13 10:50 testfile2.sh
