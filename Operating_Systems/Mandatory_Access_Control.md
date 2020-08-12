@@ -116,7 +116,11 @@ New password: more-entropy
 Retype new password: more-entropy
 passwd: all authentication tokens updated successfully.
 ```
-By adding `cshannon`  to the `wheel` group this user obtains `sudo` administrator rights. We open a new terminal window, log in with `ssh cshannon@localhost` and verify that the newly created user currently possesses the default `unconfined_u` security context
+By adding `cshannon`  to the `wheel` group this user obtains `sudo` administrator rights. We start the `sshd` systemd service in the root window with the command
+```
+# systemctl start sshd
+```
+Then we open a new terminal window, log in with `ssh cshannon@localhost` and verify that the newly created user currently possesses the default `unconfined_u` security context
 ```console
 [cshannon@localhost ~]$ id
 uid=1001(cshannon) gid=1001(cshannon) groups=1001(cshannon),10(wheel)
