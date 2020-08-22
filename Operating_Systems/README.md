@@ -8,6 +8,7 @@ We recommend to work through these tutorials step-by-step as a learning exercise
 * [Discretionary Access Control](Discretionary_Access_Control.md)
 * [Mandatory Access Control](Mandatory_Access_Control.md)
 * [Passwords](Passwords.md)
+* [Platform Security](Platform_Security.md)
 
 About the author:
 

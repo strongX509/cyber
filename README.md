@@ -24,6 +24,7 @@ A collection of cyber tutorials including Python shell and C program examples:
 * [Discretionary Access Control](Operating_Systems/Discretionary_Access_Control.md)
 * [Mandatory Access Control](Operating_Systems/Mandatory_Access_Control.md)
 * [Passwords](Operating_Systems/Passwords.md)
+* [Platform Security](Operating_Systems/Platform_Security.md)
 
 ## Virtual Private Networks
 
