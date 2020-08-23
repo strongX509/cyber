@@ -725,3 +725,9 @@ If an object isn't used anymore it can be removed from NV-RAM with the following
     value: 0xA000220
   size: 446
 ```
+
+Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]
+
+[AS]: mailto:andreas.steffen@strongsec.net
+[CC]: http://creativecommons.org/licenses/by/4.0/
+
