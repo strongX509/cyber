@@ -1,12 +1,13 @@
-# Multi-Threading
+# Multi-Threading and Parallel Processes
 
 ## Table of Contents
 1. [Threads](#section1)
 2. [Spinlocks](#section2)
 3. [Mutexes](#section3)
 4. [Deadlocks](#section4)
+5. [Parallel Processes with Shared Memory](#section5)
 
-C language programs: &nbsp; [C1](#c1) &nbsp; [C2](#c2) &nbsp; [C3](#c3) &nbsp; [C4](#c4)
+C language programs: &nbsp; [C1](#c1) &nbsp; [C2](#c2) &nbsp; [C3](#c3) &nbsp; [C4](#c4) &nbsp; [C5](#c5)
 
 ## Threads <a name="section1"></a>
 
@@ -569,6 +570,242 @@ Started thread 1: 0x7f72834d3700
 Started thread 2: 0x7f7282cd2700
 Thread 1: g =     1
 Thread 2: g =     2
+```
+## Parallel Processes with Shared Memory <a name="section5"></a>
+
+Instead of spawning multiple threads within a process we can **fork** multiple processes that synchronize with each other via a **shared memory** segment. The `fork()` function creates a new process by duplicating the calling process.  The new process is referred to as the **child** process.  The calling process is referred to as the **parent** process. The child process and the parent process run in separate memory spaces.  At the time of `fork()` both memory spaces have the same content. The child process is an exact duplicate of the parent process  except that
+
+* The child has a unique PID like any other process running in the operating system.
+* The child has a parent process ID which is same as the PID of the process that created it.
+* Resource utilization and CPU time counters are reset to zero in child process.
+* For additional exceptions refer to the `fork` man page.
+
+**C 5**: <a name="c5"></a>In the program [fork_mutex.c](fork_mutex.c) the parent process creates a global shared memory segment storing an integer variable `g`  protected by a *POSIX Mutex*. The parent process then forks three child processes which each access the variable `g` and increment it by 1 as in the previous examples.
+
+```C
+  1 #include <stdio.h>
+  2 #include <stdlib.h>
+  3 #include <stdint.h>
+  4 #include <unistd.h>
+  5 #include <pthread.h>
+  6 #include <sys/shm.h>
+  7 #include <sys/wait.h>
+  8
+  9 /* number of child processes */
+ 10 #define N	3
+ 11 
+ 12 typedef struct {
+ 13     /* variable incremented jointly by child processes */
+ 14     uint32_t g;
+ 15     /* mutex protecting variable g */
+ 16     pthread_mutex_t mutex;
+ 17 } shared_t;
+ 18
+ 19 /* pointer to shared_t object */
+ 20 shared_t *shared;
+ 21
+ 22 /* shared memory segment ID */
+ 23 int shm_id;
+ 24
+ 25 int main()
+ 26 {
+ 27     pid_t pid;
+ 28     int id;
+ 29
+ 30     printf("Parent : pid %d\n", (int)getpid());
+ 31
+ 32     /* parent process creates the shared memory segment */
+ 33     shm_id = shmget(IPC_PRIVATE, sizeof(shared_t), IPC_CREAT | 0666);
+ 34     if (shm_id < 0)
+ 35     {
+ 36         exit(-1);
+ 37     }
+ 38     printf("Parent : allocated %d bytes at segment %d\n",
+ 39             (int)sizeof(shared_t), shm_id);
+ 40
+ 41     /* parent process attaches the shared segment */
+ 42     shared = (shared_t *) shmat(shm_id, NULL, 0);
+ 43
+ 44     if (shared == (shared_t *) -1)
+ 45     {
+ 46         printf("Parent : attaching to segment %d failed\n", shm_id);
+ 47         shmctl(shm_id, IPC_RMID, NULL);
+ 48         exit(-1);
+ 49     }
+ 50     printf("Parent : attached to segment %d\n", shm_id);
+ 51     fflush(stdout);
+ 52
+ 53     /* parent process initializes mutex so it works properly in shared memory */
+ 54     {
+ 55         pthread_mutexattr_t attr;
+ 56
+ 57         pthread_mutexattr_init(&attr);
+ 58         pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+ 59         pthread_mutex_init(&shared->mutex, &attr);
+ 60     }
+ 61
+ 62     /* parent process initalizes shared variable g */
+ 63     shared->g = 0;
+ 64
+ 65     /* parent process forks the child processes */
+ 66     for (id = 1; id <= N; id++)
+ 67     {
+ 68         pid = fork();
+ 69
+ 70         /* the fork() command returns pid = 0 in child processes */
+ 71         if (pid > 0)
+ 72         {
+ 73             printf("Parent : forked child %d with pid %d\n", id, (int)pid);
+ 74             fflush(stdout);
+ 75         }
+ 76         else
+ 77         {
+ 78             break;
+ 79         }
+ 80     }
+ 81
+ 82     if (pid == 0)
+ 83     {
+ 84         uint32_t iterations = 10000;
+ 85
+ 86         /* each child process attaches the shared segment */
+ 87         shared = (shared_t *) shmat(shm_id, NULL, 0);
+ 88
+ 89         if (shared == (shared_t *) -1)
+ 90         {
+ 91             printf("Child %d: attaching to segment failed\n", id);
+ 92         }
+ 93         else
+ 94         {
+ 95             printf("Child %d: attached to segment %d\n", id, shm_id);
+ 96         }
+ 97
+ 98         /* each child process uses the shared segment */
+ 99         while (iterations--)
+100         {
+101             uint32_t rounds = 10000, sum = 0, inc;
+102
+103             /* increment global variable g with an atomic operation */
+104             pthread_mutex_lock(&shared->mutex);
+105             inc = ++shared->g;
+106             pthread_mutex_unlock(&shared->mutex);
+107
+108             while (rounds--)
+109             {
+110                 sum += inc;
+111             }
+112
+113             /* sleep 1 millisecond */
+114             usleep(1000);
+115
+116             printf("Child %d: inc = %5u, sum = %9u\n", id, inc, sum);
+117             fflush(stdout);
+118         }
+119
+120         /* each child process detaches the segment */
+121         if (shmdt(shared) == -1)
+122         {
+123             printf("Child %d: detaching segment %d failed\n", id, shm_id);
+124         }
+125         else
+126         {
+127             printf("Child %d: detached segment %d\n", id, shm_id);
+128         }
+129     }
+130     else
+131     {
+132         /* parent process waits for child processes to exit */
+133         for (id = 1; id <= N; id++)
+134         {
+135             wait(NULL);
+136         }
+137 
+138         /* parent process destroys the mutex */
+139         pthread_mutex_destroy(&shared->mutex);
+140
+141         /* parent process detaches the segment */
+142         if (shmdt(shared) == -1)
+143         {
+144             printf("Parent : detaching segment %d failed\n", shm_id);
+145         }
+146         else
+147         {
+148             printf("Parent : detached segment %d\n", shm_id);
+149         }
+150
+151         /* parent process deletes the segment */
+152         if (shmctl(shm_id, IPC_RMID, NULL) == -1)
+153         {
+154             printf("Parent : deleting segment %d failed\n", shm_id);
+155         }
+156         else
+157         {
+158             printf("Parent : deleted segment %d\n", shm_id);
+159         }
+160     }
+161
+162     exit(0);
+163 }
+```
+We compile and start the program:
+```console
+> gcc -ggdb -o fork_mutex fork_mutex.c -lpthread
+> ./fork_mutex
+Parent : pid 73841
+Parent : allocated 48 bytes at segment 65553
+Parent : attached to segment 65553
+Parent : forked child 1 with pid 73843
+Parent : forked child 2 with pid 73844
+Parent : forked child 3 with pid 73845
+Child 1: attached to segment 65553
+Child 1: inc =     1, sum =     10000
+Child 2: attached to segment 65553
+Child 2: inc =     2, sum =     20000
+Child 3: attached to segment 65553
+Child 3: inc =     3, sum =     30000
+Child 1: inc =     4, sum =     40000
+Child 3: inc =     5, sum =     50000
+Child 2: inc =     6, sum =     60000
+...
+Child 3: inc = 29813, sum = 298130000
+Child 2: inc = 29814, sum = 298140000
+Child 2: detached segment 65553
+Child 1: inc = 29815, sum = 298150000
+Child 3: inc = 29816, sum = 298160000
+...
+Child 3: inc = 29929, sum = 299290000
+Child 3: inc = 29930, sum = 299300000
+Child 3: detached segment 65553
+Child 1: inc = 29928, sum = 299280000
+Child 1: inc = 29931, sum = 299310000
+...
+Child 1: inc = 29999, sum = 299990000
+Child 1: inc = 30000, sum = 300000000
+Child 1: detached segment 65553
+Parent : detached segment 65553
+Parent : deleted segment 65553
+```
+Thanks to the `mutex` protecting the variable `g` the correct final increment of `30000` is reached. While the program is running we can check the process status and see the four process instances of `fork_mutex`.
+```console
+> ps aux | grep fork_mutex
+root       73841  0.0  0.0   2420   728 pts/2    S+   13:28   0:00 ./fork_mutex
+root       73843  1.0  0.0   2424   108 pts/2    S+   13:28   0:00 ./fork_mutex
+root       73844  1.5  0.0   2424   108 pts/2    S+   13:28   0:00 ./fork_mutex
+root       73845  1.5  0.0   2424   108 pts/2    S+   13:28   0:00 ./fork_mutex
+```
+When we look up the `memory map` of the parent process with pid `73841` we can clearly identify the 4096 byte `SYSV` shared memory segment with ID `65553`.
+```
+> cat /proc/73841/maps
+558a8fca1000-558a8fca2000 r--p 00000000 08:01 1443111 /home/hacker/fork_mutex
+558a8fca2000-558a8fca3000 r-xp 00001000 08:01 1443111 /home/hacker/fork_mutex
+558a8fca3000-558a8fca4000 r--p 00002000 08:01 1443111 /home/hacker/fork_mutex
+558a8fca4000-558a8fca5000 r--p 00002000 08:01 1443111 /home/hacker/fork_mutex
+558a8fca5000-558a8fca6000 rw-p 00003000 08:01 1443111 /home/hacker/fork_mutex
+558a918ec000-558a9190d000 rw-p 00000000 00:00 0       [heap]
+...
+7f737294a000-7f737294b000 rw-s 00000000 00:01 65553   /SYSV00000000 (deleted)
+...
+7fffc897f000-7fffc89a0000 rw-p 00000000 00:00 0       [stack]
 ```
 
 Author:  [Andreas Steffen][AS] [CC BY 4.0][CC]

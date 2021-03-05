@@ -20,7 +20,7 @@ A collection of cyber tutorials including Python shell and C program examples:
 
 ## Operating Systems
 
-* [Multi-Threading](Operating_Systems/Multi-Threading.md)
+* [Multi-Threading and Parallel Processes](Operating_Systems/Multi-Threading.md)
 * [Discretionary Access Control](Operating_Systems/Discretionary_Access_Control.md)
 * [Mandatory Access Control](Operating_Systems/Mandatory_Access_Control.md)
 * [Passwords](Operating_Systems/Passwords.md)

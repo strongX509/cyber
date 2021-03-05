@@ -4,7 +4,7 @@ We recommend to work through these tutorials step-by-step as a learning exercise
 
 ## Tutorials
 
-* [Multi-Threading](Multi-Threading.md)
+* [Multi-Threading and Parallel Processes](Multi-Threading.md)
 * [Discretionary Access Control](Discretionary_Access_Control.md)
 * [Mandatory Access Control](Mandatory_Access_Control.md)
 * [Passwords](Passwords.md)
