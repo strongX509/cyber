@@ -4,8 +4,9 @@
 1. [Configuration Files](#section1)
 2. [Initiating Connection](#section2)
 3. [Tunneling Traffic](#section3)
-3. [Terminating Connection](#section4)
-4. [Wireshark Trace](#section5)
+4. [Virtual IP Address Pool](#section4)
+3. [Terminating Connection](#section5)
+4. [Wireshark Trace](#section6)
 
 strongSwan exercise: &nbsp; [strongSwan1](#strongswan1) 
 
@@ -122,7 +123,7 @@ The  VPN client initiates the  `eap` CHILD_SA
 ```console
 client# swanctl --initiate --child eap > /dev/null
 10[CFG] vici initiate CHILD_SA 'eap'
-14[IKE] initiating IKE_SA eap[1] to 192.168.0.2
+14[IKE] initiating IKE_SA eap[3] to 192.168.0.2
 ```
 The  VPN client is sending the `IKE_SA_INIT` request to the VPN server
 ```console
@@ -149,7 +150,7 @@ No explicit IKEv2 identity is defined, therefore by default `IDi` is set to the 
 ```
 The `SA`, `TSi` and `TSr` payloads for the `CHILD_SA` `psk` are added
 ```console
-13[IKE] establishing CHILD_SA eap{1}
+13[IKE] establishing CHILD_SA eap{4}
 ```
 The VPN client is sending the  `IKE_AUTH` request to the VPN server. No `AUTH`payload is sent, thereby signalling to the VPN server that EAP-based authentication is desired.
 
@@ -208,7 +209,7 @@ The final `IKE_AUTH` response is received from the VPN server
 ```
 The `IKE_SA` `eap`has been successfully established
 ```console
-05[IKE] IKE_SA eap[1] established between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
+05[IKE] IKE_SA eap[3] established between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
 ```
 The  VPN server proposed the time of the next `IKE_SA` rekeying
 ```console
@@ -217,12 +218,12 @@ The  VPN server proposed the time of the next `IKE_SA` rekeying
 ```
 The  VPN server has assigned a *Virtual IP* address to the VPN client
 ```console
-05[IKE] installing new virtual IP 10.3.0.1
+05[IKE] installing new virtual IP 10.3.0.3
 ```
 The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH` response define the crypto parameters and traffic selectors of the `CHILD_SA` to be established.
 ```console
 05[CFG] selected proposal: ESP:AES_GCM_16_256/NO_EXT_SEQ
-05[IKE] CHILD_SA eap{1} established with SPIs c8f898c5_i cdb938a8_o and TS 10.3.0.1/32 === 10.1.0.0/24 192.168.0.2/32
+05[IKE] CHILD_SA eap{4} established with SPIs c8f898c5_i cdb938a8_o and TS 10.3.0.3/32 === 10.1.0.0/24 192.168.0.2/32
 05[IKE] peer supports MOBIKE
 ```
 
@@ -231,7 +232,7 @@ The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH` response define th
 
 ## Tunneling Traffic <a name="section3"></a>
 
-The VPN client pings the VPN server on its Intranet address 10.1.0.2 twice. The source address of the IP packets leaving the client equals the *Virtual IP* 10.3.0.1.
+The VPN client pings the VPN server on its Intranet address 10.1.0.2 twice. The source address of the IP packets leaving the client equals the *Virtual IP* 10.3.0.3.
 ```console
 client# # ping -c 2 10.1.0.2
 PING 10.1.0.2 (10.1.0.2) 56(84) bytes of data.
@@ -251,29 +252,41 @@ Lines 15-16 of the wireshark [ trace](#section5) show the encrypted ICMP message
 The number of ESP packets are also shown by the following `swanctl` command
 ```console
 client#  swanctl --list-sas
-eap: #1, ESTABLISHED, IKEv2, 9e4c18ae6de25007_i* 086a0efb7d745d8e_r
-  local  '192.168.0.3' @ 192.168.0.3[4500] [10.3.0.1]
+eap: #3, ESTABLISHED, IKEv2, 9e4c18ae6de25007_i* 086a0efb7d745d8e_r
+  local  '192.168.0.3' @ 192.168.0.3[4500] [10.3.0.3]
   remote 'server.strongswan.org' @ 192.168.0.2[4500]
   AES_CBC-256/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/CURVE_25519
   established 50s ago, rekeying in 12921s
-  eap: #1, reqid 1, INSTALLED, TUNNEL, ESP:AES_GCM_16-256
+  eap: #4, reqid 1, INSTALLED, TUNNEL, ESP:AES_GCM_16-256
     installed 50s ago, rekeying in 3291s, expires in 3910s
     in  c8f898c5,    252 bytes,     3 packets,    19s ago
     out cdb938a8,    252 bytes,     3 packets,    19s ago
-    local  10.3.0.1/32
+    local  10.3.0.3/32
     remote 10.1.0.0/24 192.168.0.2/32
 ```
-## Terminating Connection <a name="section4"></a>
+## Virtual IP Address Pool <a name="section4"></a>
+
+Change for a while to the VPN server console window and have a look at the pool of virtual IP addresses and the existing address leases:
+```console
+server# swanctl --list-pools --leases
+rw_pool              10.3.0.0                         1 / 2 / 254
+  10.3.0.1                       offline  'client.strongswan.org'
+  10.3.0.2                       offline  'hacker@strongswan.org'
+  10.3.0.3                       online   'hacker'
+```
+We see that for the current `eap` `IKE_SA` the virtual IP address `10.3.0.3` has been leased to the client with the EAP ID `hacker` and that from the two previous `IKE_SAs` the addresses `10.3.0.1` and `10.3.0.2` have been reserved for the corresponding client IDs that are currently offline.
+
+## Terminating Connection <a name="section5"></a>
 
 The `IKE_SA` `eap` and the dependent `CHILD_SA` of the same name can be terminated with the following command
 ```console
 client# swanctl --terminate --ike eap > /dev/null
 06[CFG] vici terminate IKE_SA 'eap'
-03[IKE] deleting IKE_SA eap[1] between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
+03[IKE] deleting IKE_SA eap[3] between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
 ```
 The VPN client is sending an `INFORMATIONAL` request containing a `DELETE` notification
 ```console
-03[IKE] sending DELETE for IKE_SA eap[1]
+03[IKE] sending DELETE for IKE_SA eap[3]
 03[ENC] generating INFORMATIONAL request 5 [ D ]
 03[NET] sending packet: from 192.168.0.3[4500] to 192.168.0.2[4500] (80 bytes)
 ```
@@ -284,7 +297,7 @@ The `INFORMATIONAL` response is received from the VPN server causing the `IKE_SA
 13[IKE] IKE_SA deleted
 ```
 
-## Wireshark Trace <a name="section5"></a>
+## Wireshark Trace <a name="section6"></a>
 
 ![Wireshark Trace 4][WIRESHARK_4]
 

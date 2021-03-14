@@ -103,7 +103,7 @@ The  VPN client initiates the  `eap-tls` CHILD_SA
 ```console
 client# swanctl --initiate --child eap-tls > /dev/null
 01[CFG] vici initiate CHILD_SA 'eap-tls'
-16[IKE] initiating IKE_SA eap-tls[1] to 192.168.0.2
+16[IKE] initiating IKE_SA eap-tls[4] to 192.168.0.2
 ```
 The  VPN client is sending the `IKE_SA_INIT` request to the VPN server
 ```console
@@ -130,7 +130,7 @@ No explicit IKEv2 identity is defined, therefore by default `IDi` is set to the 
 ```
 The `SA`, `TSi` and `TSr` payloads for the `CHILD_SA` `psk` are added
 ```console
-12[IKE] establishing CHILD_SA eap-tls{1}
+12[IKE] establishing CHILD_SA eap-tls{5}
 ```
 The VPN client is sending the  `IKE_AUTH` request to the VPN server. No `AUTH`payload is sent, thereby signalling to the VPN server that EAP-based authentication is desired.
 
@@ -232,21 +232,21 @@ The final `IKE_AUTH` response is received from the VPN server
 ```
 The `IKE_SA` `eap-tls`has been successfully established
 ```console
-12[IKE] IKE_SA eap-tls[1] established between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
+12[IKE] IKE_SA eap-tls[4] established between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
 ```
 The  VPN server proposed the time of the next `IKE_SA` rekeying
 ```console
 12[IKE] scheduling rekeying in 14015s
 12[IKE] maximum IKE_SA lifetime 15455s
 ```
-The  VPN server has assigned a *Virtual IP* address to the VPN client
+Since the EAP ID of the client based on its X.509 certificate is again `client.strongswan.org`, the  VPN server has re-assigned the *Virtual IP* address `10.3.0.1` to the VPN client
 ```console
 12[IKE] installing new virtual IP 10.3.0.1
 ```
 The `SA`, `TSi` and `TSr` payloads received in the `IKE_AUTH` response define the crypto parameters and traffic selectors of the `CHILD_SA` to be established.
 ```console
 12[CFG] selected proposal: ESP:AES_GCM_16_256/NO_EXT_SEQ
-12[IKE] CHILD_SA eap-tls{1} established with SPIs c1a15a6f_i cd5a513a_o and TS 10.3.0.1/32 === 10.1.0.0/24 192.168.0.2/32
+12[IKE] CHILD_SA eap-tls{5} established with SPIs c1a15a6f_i cd5a513a_o and TS 10.3.0.1/32 === 10.1.0.0/24 192.168.0.2/32
 12[IKE] peer supports MOBIKE
 ```
 
@@ -293,11 +293,11 @@ The `IKE_SA` `eap-tls` and the dependent `CHILD_SA` of the same name can be term
 ```console
 client# swanctl --terminate --ike eap-tls
 08[CFG] vici terminate IKE_SA 'eap-tls'
-01[IKE] deleting IKE_SA eap-tls[1] between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
+01[IKE] deleting IKE_SA eap-tls[4] between 192.168.0.3[192.168.0.3]...192.168.0.2[server.strongswan.org]
 ```
 The VPN client is sending an `INFORMATIONAL` request containing a `DELETE` notification
 ```console
-01[IKE] sending DELETE for IKE_SA eap-tls[1]
+01[IKE] sending DELETE for IKE_SA eap-tls[4]
 01[ENC] generating INFORMATIONAL request 8 [ D ]
 01[NET] sending packet: from 192.168.0.3[4500] to 192.168.0.2[4500] (80 bytes)
 ```
