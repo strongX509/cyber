@@ -212,7 +212,7 @@ signature algorithm is NULL with ERROR hash
   keyid:     ab:49:74:05:79:d8:fd:67:cc:fc:69:33:fa:67:a8:15:75:f7:17:00
   subjkey:   ee:8d:e6:b5:d9:47:e0:ad:3a:69:26:cd:7f:8f:01:48:1c:f0:f6:32
 ```
-Since no signature algorithm is defined we notice that an `EK`is a decryption key and thus cannot be used for signatures.
+Since no signature algorithm is defined we notice that an `EK` is a decryption key and thus cannot be used for signatures.
 
 In order for `pki` to connect correctly to the TPM simulator the `mssim` driver must be specified explicitly in `/etc/strongswan.conf`
 ```console
@@ -242,7 +242,7 @@ TPM 2.0 - ECC curves: NIST_P256 NIST_P384 BN_P256
 TPM 2.0 - PCR banks: SHA1 SHA256 SHA384 SHA512
 TPM 2.0 via TSS2 v2 available
 ```
-Then the PKCS#1 encoding of the public key follows: 
+Then the `PKCS#1` encoding of the public key follows:
 ```console
 L0 - subjectPublicKeyInfo:
 L1 - algorithm:
@@ -525,7 +525,7 @@ A quick look at the X.509 certificate before it is delivered to the user
 
 ### RSA Attestation Certificate
 
-In order to protect `AK` certificate received from the `CA` from accidental deletion from the system harddisk we want to store it in the *Non-Volatile* `NV` memory of the TPM. In order to allocate the required amount of  `NV` memory we determine the exact size of the binary-encoded X.509 certificate
+In order to protect the `AK` certificate received from the `CA` from accidental deletion from the system harddisk we want to store it in the *Non-Volatile* `NV` memory of the TPM. To allocate the required amount of  `NV` memory we determine the exact size of the binary-encoded X.509 certificate
 ```console
 ls -l ak_rsa_Cert.der 
 -rw-r--r-- 1 root root 842 Mar 15 19:19 ak_rsa_Cert.der
@@ -547,7 +547,7 @@ The following command shows all objects stored in `NV` memory
 The `pki` tool can display X.509 certificates stored in the TPM using the object handle
 ```console
 # pki --print --type x509 --keyid 0x01800003
-PM 2.0 via TSS2 v2 available
+TPM 2.0 via TSS2 v2 available
 loaded certificate from TPM NV index 0x01800003
   subject:  "C=CH, O=Cyber, OU=user@strongswan.org"
   issuer:   "C=CH, O=Cyber, CN=My RSA CA"
