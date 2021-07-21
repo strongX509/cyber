@@ -163,7 +163,14 @@ uint16_t ntohs(uint16_t netshort);
 All Intel, AMD  and RISC-V processors are *little-endian* whereas most ARM and Power PC processors are *bi-endian*, i.e. they can be configured by a software switch to work either in *big-endian* or *little-endian* mode.
 
 **Python 2**: <a name="python2"></a>By using `ctypes` address pointers and the` ctypes` cast mechanism, we try to get at the individual bytes of word structures
-
+``` <!-- language: lang-none -->
+             memory address  value  variable   cast 1     cast 2
+             ---------------------+----------+----------+---------+
+pointer -->  0x7f513d85ac48 | bb  |    x     | x16_p[0] | x8_p[0] |
+                            |     |          |          + --------+
+             0x7f513d85ac49 | aa  |          |          | x8_p[1] |
+             ---------------------+----------+----------+---------+
+```
 We access the individual bytes of a `uint16_t` word and see that the storage order is *little-endian*. By exchanging LSB and MSB the `uint16_t` word is converted from *host order* to *network order*.
 ```python
 >>> from ctypes import *
@@ -189,6 +196,18 @@ We access the individual bytes of a `uint16_t` word and see that the storage ord
 ```
 
 We access the individual bytes of a `uint32_t` word and again *Little-Endianness* is observed.
+``` <!-- language: lang-none -->
+             memory address  value  variable   cast
+             ---------------------+----------+---------+
+pointer -->  0x7f0a21408c48 | dd  |    x     | x8_p[0] |
+                            |     |          + --------+
+             0x7f0a21408c49 | cc  |          | x8_p[1] |
+                            |     |          + --------+
+             0x7f0a21408c4a | bb  |          | x8_p[2] |
+                            |     |          + --------+
+             0x7f0a21408c4b | aa  |          | x8_p[3] |
+             ---------------------+----------+---------+
+```
 ```python
 >>> from ctypes import *
 >>> uint8_p = POINTER(c_uint8)      # define uint8_t  pointer type
@@ -207,6 +226,26 @@ We access the individual bytes of a `uint32_t` word and again *Little-Endianness
 '0xaa'                              # MSB is output
 ```
 The same happens when accessing the individual bytes of an `uint64_t`
+``` <!-- language: lang-none -->
+             memory address  value  variable   cast
+             ---------------------+----------+---------+
+pointer -->  0x7f1740f59c48 | dd  |    x     | x8_p[0] |
+                            |     |          + --------+
+             0x7f1740f59c49 | cc  |          | x8_p[1] |
+                            |     |          + --------+
+             0x7f1740f59c4a | bb  |          | x8_p[2] |
+                            |     |          + --------+
+             0x7f1740f59c4b | aa  |          | x8_p[3] |
+                            |     |          + --------+
+             0x7f1740f59c4c | 44  |          | x8_p[4] |
+                            |     |          + --------+
+             0x7f1740f59c4d | 33  |          | x8_p[5] |
+                            |     |          + --------+
+             0x7f1740f59c4e | 22  |          | x8_p[6] |
+                            |     |          + --------+
+             0x7f1740f59c4f | 11  |          | x8_p[7] |
+             ---------------------+----------+---------+
+```
 ```python
 from ctypes import *
 >>> uint8_p = POINTER(c_uint8)
