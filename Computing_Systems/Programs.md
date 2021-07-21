@@ -108,7 +108,9 @@ Dump of assembler code for function sum:
    0x00000000004005dc <+38>: retq                       ; return to main program
 End of assembler dump.
 ```
-In the assembly code of the function `sum` we see that the 32-bit `%edi` register is used to transfer the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program. Also the current value of the stack pointer `%rsp` is used to reference memory locations on the stack. The details on the use of a processor's registers and stack will be explained in the [Processor Architecture](Processor_Architecture.md) tutorial.
+In the assembly code of the function `sum` we see that the 32-bit `%edi` register is used to transfer the single input parameter `n`  of type `int` and the 32-bit `%eax` register returns the `int` value of `s` back to the main program. Also the current value of the stack pointer `%rsp` is used to reference memory locations on the stack. The details on the use of a processor's registers and stack will be explained in the [Processor Architecture](Processor_Architecture.md) tutorial and an overview on the most common  `Intel x86-64` machine instructions can be found in the following [cheat sheet][X86_CS].
+
+[X86_CS]: https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
 
 We now set a *breakpoint* at line `11` of the C source code which is just before the sum is updated with the statement `s += n`. Then we start the execution with `run 3` setting the input argument to `n = 3`.
 ```assembly
