@@ -236,7 +236,7 @@ We notice that each thread has its own stack area.
 
 ## Spinlocks <a name="section2"></a>
 
-If we execute the `multithreads` program several times, it sometimes happens that the final value of the `inc` variable in the last thread to rejoin the main program is not `30000` but `299999` or even `29998` as shown in the run below:
+If we execute the `multithreads` program several times, it sometimes happens that the final value of the `inc` variable in the last thread to rejoin the main program is not `30000` but `29999` or even `29998` as shown in the run below:
 ```console
 > ./multithreads
 ...
